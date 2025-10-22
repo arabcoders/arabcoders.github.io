@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Home on m7eesn blog</title>
+    <link>https://blog.looter.dev/</link>
+    <description>Recent content in Home on m7eesn blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 18 Oct 2025 09:00:00 +0000</lastBuildDate>
+    <atom:link href="https://blog.looter.dev/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kuwait Cyber League CTF (2025)</title>
+      <link>https://blog.looter.dev/blog/2025-10-18-kuwait-cyber-league-ctf-2025/</link>
+      <pubDate>Sat, 18 Oct 2025 09:00:00 +0000</pubDate>
+      <guid>https://blog.looter.dev/blog/2025-10-18-kuwait-cyber-league-ctf-2025/</guid>
+      <description>&lt;p&gt;My team and I participated in the Kuwait Cyber League CTF held on October 18, 2025. The competition featured a variety of challenges across multiple categories,&#xA;We unfortunately, did not secure the first place, however we managed to place 2nd overall, due to various factors including our main binary exploitation/reverse engineering expert not being able to participate due to personal reasons. We have solved 10 challenges out of the 14 available, which is respectable considering the technical challenges the platform were having.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Cybertalents - New Year Challenge (2025)</title>
+      <link>https://blog.looter.dev/blog/2025-01-10-cybertalents-new-year-challenge-2025/</link>
+      <pubDate>Fri, 10 Jan 2025 12:00:00 +0000</pubDate>
+      <guid>https://blog.looter.dev/blog/2025-01-10-cybertalents-new-year-challenge-2025/</guid>
+      <description>&lt;h1 id=&#34;new-year-challenge-2025--apple&#34;&gt;New Year Challenge 2025 » Apple&lt;/h1&gt;&#xA;&lt;p&gt;General Information / Basic / 25 (pts)&lt;/p&gt;&#xA;&lt;p&gt;FLAG Format: just the name of the malware&lt;/p&gt;&#xA;&lt;p&gt;Description:&lt;/p&gt;&#xA;&lt;p&gt;A malware that plagues MacOS devices, and relies on Flash updates and social engineering tactics in order to dupe victims into installing the malware on devices.&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;This challenge was an easy one few google searches and you find &lt;a href=&#34;https://www.zdnet.com/article/this-simple-malware-still-plagues-one-in-10-mac-users/&#34;&gt;This simple malware still plagues one in 10 Mac users&lt;/a&gt;,&lt;/p&gt;&#xA;&lt;p&gt;The flag is &lt;code&gt;Shlayer&lt;/code&gt;&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
