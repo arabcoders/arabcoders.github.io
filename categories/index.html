@@ -186,9 +186,43 @@
 
 </style>
 <style>
-    div.highlight pre {
-        padding: 1em !important;
+  code {
+    padding: 4px 8px !important;
+    margin: 0 4px !important;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+   
+  div.highlight {
+    background-color: rgba(15, 1, 1, 0.801);
+    border-radius: 3px;
+  }
+
+  div.highlight pre {
+    padding: 1em !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  div.highlight code {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    code {
+      background-color: rgba(255, 255, 255, 0.1);
     }
+
+    div.highlight {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
 </style></head>
 
 <body>

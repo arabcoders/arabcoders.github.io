@@ -194,9 +194,43 @@ We unfortunately, did not secure the first place, however we managed to place 2n
 
 </style>
 <style>
-    div.highlight pre {
-        padding: 1em !important;
+  code {
+    padding: 4px 8px !important;
+    margin: 0 4px !important;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+   
+  div.highlight {
+    background-color: rgba(15, 1, 1, 0.801);
+    border-radius: 3px;
+  }
+
+  div.highlight pre {
+    padding: 1em !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  div.highlight code {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    code {
+      background-color: rgba(255, 255, 255, 0.1);
     }
+
+    div.highlight {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
 </style></head>
 
 <body>
@@ -340,8 +374,8 @@ We unfortunately, did not secure the first place, however we managed to place 2n
 <li>Cookies with <code>path=/</code> are sent last</li>
 </ol>
 <p><strong>Resulting Cookie Header:</strong></p>
-<pre tabindex="0"><code>Cookie: $Version=1; lang=&#34;capture; session=HTTPONLY_VALUE|timestamp|sig; dummy=end&#34;
-</code></pre><h3 id="step-3-cookie-reflection">Step 3: Cookie Reflection</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Cookie: $Version=1; lang=&#34;capture; session=HTTPONLY_VALUE|timestamp|sig; dummy=end&#34;
+</span></span></code></pre></div><h3 id="step-3-cookie-reflection">Step 3: Cookie Reflection</h3>
 <p>When the server calls <code>request.get_cookie('lang')</code> with RFC2109 parsing enabled:</p>
 <ul>
 <li>It treats the quoted value as a single string</li>
@@ -520,8 +554,8 @@ s_{i+1} = sha256(s_i.encode()).hexdigest()
 <ol>
 <li>Start from seed <code>&quot;213947&quot;</code>.</li>
 <li>Loop 10 000 times: <code>s = sha256(s.encode()).hexdigest()</code>. After the final iteration:
-<pre tabindex="0"><code>cd270ea25a26fdbb468afda746fda5e3798810f52e7d278bd5488892058df950
-</code></pre></li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>cd270ea25a26fdbb468afda746fda5e3798810f52e7d278bd5488892058df950
+</span></span></code></pre></div></li>
 <li>The encrypt package uses the <strong>ASCII bytes</strong> of the substrings:
 <ul>
 <li>Key = first 32 characters → <code>cd270ea25a26fdbb468afda746fda5e3</code> (32 ASCII bytes → 256 bits).</li>

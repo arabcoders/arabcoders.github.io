@@ -215,9 +215,43 @@ The flag is Shlayer">
 
 </style>
 <style>
-    div.highlight pre {
-        padding: 1em !important;
+  code {
+    padding: 4px 8px !important;
+    margin: 0 4px !important;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+   
+  div.highlight {
+    background-color: rgba(15, 1, 1, 0.801);
+    border-radius: 3px;
+  }
+
+  div.highlight pre {
+    padding: 1em !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  div.highlight code {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    code {
+      background-color: rgba(255, 255, 255, 0.1);
     }
+
+    div.highlight {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
 </style></head>
 
 <body>
@@ -414,8 +448,8 @@ The flag is Shlayer">
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> jsonify({<span style="color:#e6db74">&#34;Message&#34;</span>: <span style="color:#e6db74">&#34;Please login&#34;</span>}), <span style="color:#ae81ff">401</span>
 </span></span></code></pre></div><p>Once you update the code, the flag become accessible at <code>/flag/</code>.</p>
-<pre tabindex="0"><code>The flag is `Flag{QCFAYlVrZDZWczBaaDlzVEFYejhwQ2d3dE95UzFlSDVCaDN0ZFJwWHRvbStRbz1lN2Q5MGY3ZmMwNDM1YzU3}`
-</code></pre><hr>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>The flag is `Flag{QCFAYlVrZDZWczBaaDlzVEFYejhwQ2d3dE95UzFlSDVCaDN0ZFJwWHRvbStRbz1lN2Q5MGY3ZmMwNDM1YzU3}`
+</span></span></code></pre></div><hr>
 <h1 id="year-challenge-2025--vrcon">Year Challenge 2025 » VRCon</h1>
 <p>Digital Forensics / Easy / 50 (pts)</p>
 <p>Flag Format: Flag{}</p>
