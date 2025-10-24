@@ -6,8 +6,15 @@
     <description>Recent content in Flagyard on m7eesn blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 Oct 2025 17:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 24 Oct 2025 17:40:00 +0000</lastBuildDate>
     <atom:link href="https://blog.looter.dev/categories/flagyard/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>OhMyQL – [Web] (Hard) - FlagYard</title>
+      <link>https://blog.looter.dev/blog/2025-10-24-flagyard-ohmyql-web-challenge/</link>
+      <pubDate>Fri, 24 Oct 2025 17:40:00 +0000</pubDate>
+      <guid>https://blog.looter.dev/blog/2025-10-24-flagyard-ohmyql-web-challenge/</guid>
+      <description>&lt;h2 id=&#34;challenge-overview&#34;&gt;Challenge Overview&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Category:&lt;/strong&gt; Web (GraphQL)&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Difficulty:&lt;/strong&gt; Hard&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Prompt:&lt;/strong&gt; “Are you aware of modern web technologies?”&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Goal:&lt;/strong&gt; Retrieve the &lt;code&gt;FLAG&lt;/code&gt; exposed by the GraphQL-enabled web service.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Download:&lt;/strong&gt; &lt;a href=&#34;https://blog.looter.dev/downloads/flagyard-oh-my-qL.zip&#34;&gt;download link&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;The service exposes a GraphQL endpoint on &lt;code&gt;/graphql&lt;/code&gt;, backed by a SQLite database and JSON Web Tokens (JWT) for authentication. A protected &lt;code&gt;/admin&lt;/code&gt; HTTP route returns the flag, but only if the caller supplies a JWT whose payload includes &lt;code&gt;{&amp;quot;flagOwner&amp;quot;: true}&lt;/code&gt;.&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;reconnaissance--source-review&#34;&gt;Reconnaissance &amp;amp; Source Review&lt;/h2&gt;&#xA;&lt;p&gt;Static analysis of the application’s two back-end modules, &lt;code&gt;app/app/index.js&lt;/code&gt; and &lt;code&gt;app/app/database.js&lt;/code&gt;, reveals the entire execution flow:&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Pooking [WEB] (Medium) - FlagYard</title>
       <link>https://blog.looter.dev/blog/2025-10-23-flagyard-pooking-web-challenge/</link>

