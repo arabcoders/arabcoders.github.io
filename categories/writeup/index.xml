@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Writeup on m7eesn blog</title>
+    <link>https://blog.looter.dev/categories/writeup/</link>
+    <description>Recent content in Writeup on m7eesn blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 23 Oct 2025 17:00:00 +0000</lastBuildDate>
+    <atom:link href="https://blog.looter.dev/categories/writeup/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Pooking [WEB] (Medium) - FlagYard</title>
+      <link>https://blog.looter.dev/blog/2025-10-23-flagyard-pooking-web-challenge/</link>
+      <pubDate>Thu, 23 Oct 2025 17:00:00 +0000</pubDate>
+      <guid>https://blog.looter.dev/blog/2025-10-23-flagyard-pooking-web-challenge/</guid>
+      <description>&lt;h2 id=&#34;1-challenge-overview&#34;&gt;1. Challenge Overview&lt;/h2&gt;&#xA;&lt;h3 id=&#34;challenge-description&#34;&gt;Challenge Description&lt;/h3&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;&lt;em&gt;Explore the cars world with Pooking.com&lt;/em&gt;&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;Pooking is a web challenge from flagYard, it&amp;rsquo;s about car rental portal The front page is harmless, but the API that powers it exposes several JSON endpoints:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;code&gt;POST /api/forgot-password&lt;/code&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;code&gt;POST /api/reset-password&lt;/code&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;code&gt;POST /api/login&lt;/code&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;code&gt;POST /api/book-car&lt;/code&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;The challenge is to obtain customer accounts (and ultimately the flag) without knowing any credentials up front. During recon we noticed that every request body we send is forwarded directly into MongoDB. That gives us the classic NoSQL-injection playground: if we embed operators such as &lt;code&gt;$regex&lt;/code&gt;, the server evaluates them instead of treating them as plain strings.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
