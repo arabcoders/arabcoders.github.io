@@ -6,8 +6,15 @@
     <description>Recent content in Ctf on m7eesn blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 25 Oct 2025 20:40:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 01 Nov 2025 01:00:00 +0000</lastBuildDate>
     <atom:link href="https://blog.looter.dev/categories/ctf/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Subscriber – [Web] (Hard) - FlagYard</title>
+      <link>https://blog.looter.dev/blog/2025-11-01-flagyard-subscriber-web-challenge/</link>
+      <pubDate>Sat, 01 Nov 2025 01:00:00 +0000</pubDate>
+      <guid>https://blog.looter.dev/blog/2025-11-01-flagyard-subscriber-web-challenge/</guid>
+      <description>&lt;p&gt;Special thanks to &lt;strong&gt;#!SudoSqu!!d&lt;/strong&gt; for the SQLite extension loading tip!&lt;/p&gt;&#xA;&lt;h2 id=&#34;1-challenge-overview&#34;&gt;1. Challenge Overview&lt;/h2&gt;&#xA;&lt;h3 id=&#34;challenge-description&#34;&gt;Challenge Description&lt;/h3&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;&lt;em&gt;Join the l33ts and subscribe to our innocent shop.&lt;/em&gt;&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;Subscriber is a web challenge from FlagYard featuring a Flask application with a deceptive vulnerability chain. The application offers email subscription and feedback submission functionality. At first glance, input validation and security controls appear to be in place, but multiple weaknesses combine to allow Remote Code Execution (RCE).&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Txen – [Web] (Medium) - FlagYard</title>
       <link>https://blog.looter.dev/blog/2025-10-25-flagyard-txen-web-challenge/</link>
